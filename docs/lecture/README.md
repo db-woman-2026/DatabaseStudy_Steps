@@ -22,3 +22,4 @@
 | `step-4` | [step-4.md](./step-4.md) | MongoDB 연결·JSON 문서 저장·기본 조회 |
 | `step-5` | [step-5.md](./step-5.md) | 중첩 문서·참조·배열·인덱스 |
 | `step-6` | [step-6.md](./step-6.md) | 생성·목록 조회·한 건 조회 반복 실습 |
+| `step-7` | [step-7.md](./step-7.md) | 수정·삭제·조건 검색 반복 실습 |

@@ -1,21 +1,28 @@
-const { createBookDocument } = require("./lib/bookInput")
+const {
+  createBookDocument,
+  escapeRegex,
+  parseStock,
+} = require("./lib/bookInput")
 const { sampleBooks } = require("./lib/sampleBooks")
 const { withDatabase } = require("./lib/mongodb")
 
 function showHelp() {
   console.log(`
-MongoDB CRUD 기초
+MongoDB CRUD 응용
 
-사용법:
+기준 데이터:
   npm start -- seed
+
+생성·조회:
   npm start -- list [category]
   npm start -- get <isbn>
   npm start -- add <isbn> <title> <author> <stock> [categories]
 
-예시:
-  npm start -- list database
-  npm start -- get 978-00-0001
-  npm start -- add 978-00-0099 "새 도서" "학생 저자" 3 "database,mongodb"
+조건 검색·수정·삭제:
+  npm start -- search <keyword> [minStock]
+  npm start -- update-stock <isbn> <stock>
+  npm start -- add-category <isbn> <category>
+  npm start -- remove <isbn> confirm
 `)
 }
 
@@ -61,10 +68,11 @@ async function getBook(books, isbn) {
 
   if (!book) {
     console.log("도서를 찾지 못했습니다.")
-    return
+    return null
   }
 
   console.log(JSON.stringify(book, null, 2))
+  return book
 }
 
 async function addBook(books, args) {
@@ -72,6 +80,96 @@ async function addBook(books, args) {
   const result = await books.insertOne(book)
   console.log(`도서 생성 완료: ${book.isbn}, id=${result.insertedId}`)
   await getBook(books, book.isbn)
+}
+
+async function searchBooks(books, keywordValue, minStockValue) {
+  const keyword = String(keywordValue ?? "").trim()
+
+  if (!keyword) {
+    throw new Error("검색어를 입력하세요.")
+  }
+
+  const pattern = new RegExp(escapeRegex(keyword), "i")
+  const filter = {
+    $or: [
+      { title: pattern },
+      { "author.name": pattern },
+      { categories: pattern },
+    ],
+  }
+
+  if (minStockValue !== undefined) {
+    filter["inventory.stock"] = { $gte: parseStock(minStockValue) }
+  }
+
+  const rows = await books
+    .find(filter, { projection: { _id: 0, isbn: 1, title: 1, inventory: 1 } })
+    .sort({ "inventory.stock": -1 })
+    .toArray()
+
+  console.log(`검색 결과: ${rows.length}권`)
+  console.table(rows)
+}
+
+async function updateStock(books, isbn, stockValue) {
+  const stock = parseStock(stockValue)
+  const target = await books.findOne(
+    { isbn },
+    { projection: { _id: 0, isbn: 1, title: 1, inventory: 1 } },
+  )
+
+  if (!target) {
+    console.log("수정할 도서를 찾지 못했습니다.")
+    return
+  }
+
+  console.log("수정 전", target)
+  const result = await books.updateOne(
+    { isbn },
+    { $set: { "inventory.stock": stock, updatedAt: new Date() } },
+  )
+  console.log(`수정 결과: matched=${result.matchedCount}, changed=${result.modifiedCount}`)
+  await getBook(books, isbn)
+}
+
+async function addCategory(books, isbn, categoryValue) {
+  const category = String(categoryValue ?? "").trim().toLowerCase()
+
+  if (!category) {
+    throw new Error("추가할 category를 입력하세요.")
+  }
+
+  const result = await books.updateOne(
+    { isbn },
+    {
+      $addToSet: { categories: category },
+      $set: { updatedAt: new Date() },
+    },
+  )
+  console.log(`category 결과: matched=${result.matchedCount}, changed=${result.modifiedCount}`)
+  await getBook(books, isbn)
+}
+
+async function removeBook(books, isbn, confirmation) {
+  const target = await books.findOne(
+    { isbn },
+    { projection: { _id: 0, isbn: 1, title: 1 } },
+  )
+
+  if (!target) {
+    console.log("삭제할 도서를 찾지 못했습니다.")
+    return
+  }
+
+  console.log("삭제 대상", target)
+
+  if (confirmation !== "confirm") {
+    console.log("삭제하려면 마지막 인자로 confirm을 입력하세요.")
+    return
+  }
+
+  const result = await books.deleteOne({ isbn })
+  console.log(`삭제 결과: ${result.deletedCount}건`)
 }
 
 async function main() {
@@ -86,18 +184,25 @@ async function main() {
     const books = await prepareCollection(database)
     console.log(`database: ${databaseName}`)
 
-    if (command === "seed") {
-      await seedBooks(books)
-    } else if (command === "list") {
-      await listBooks(books, args[0])
-    } else if (command === "get") {
-      await getBook(books, args[0])
-    } else if (command === "add") {
-      await addBook(books, args)
-    } else {
+    const commands = {
+      seed: () => seedBooks(books),
+      list: () => listBooks(books, args[0]),
+      get: () => getBook(books, args[0]),
+      add: () => addBook(books, args),
+      search: () => searchBooks(books, args[0], args[1]),
+      "update-stock": () => updateStock(books, args[0], args[1]),
+      "add-category": () => addCategory(books, args[0], args[1]),
+      remove: () => removeBook(books, args[0], args[1]),
+    }
+
+    const runCommand = commands[command]
+
+    if (!runCommand) {
       showHelp()
       throw new Error(`알 수 없는 command: ${command}`)
     }
+
+    await runCommand()
   })
 }
 

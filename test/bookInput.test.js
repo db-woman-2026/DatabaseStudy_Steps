@@ -2,6 +2,7 @@ const assert = require("node:assert/strict")
 const test = require("node:test")
 const {
   createBookDocument,
+  escapeRegex,
   parseCategories,
   parseStock,
 } = require("../lib/bookInput")
@@ -9,6 +10,10 @@ const {
 test("parseStock은 0 이상의 정수를 반환한다", () => {
   assert.equal(parseStock("3"), 3)
   assert.equal(parseStock(0), 0)
+})
+
+test("escapeRegex는 검색어의 정규식 기호를 일반 문자로 바꾼다", () => {
+  assert.equal(escapeRegex("Node.js (기초)"), "Node\\.js \\(기초\\)")
 })
 
 test("parseStock은 음수와 소수를 거부한다", () => {
