@@ -1,0 +1,22 @@
+{
+  "name": "database-study-steps",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Independent beginner database curriculum with cumulative RDBMS and MongoDB branches.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "check": "node --check index.js"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "keywords": [
+    "database",
+    "sqlite",
+    "mongodb",
+    "sql",
+    "beginner"
+  ],
+  "license": "MIT"
+}
