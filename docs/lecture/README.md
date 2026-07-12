@@ -23,3 +23,4 @@
 | `step-5` | [step-5.md](./step-5.md) | 중첩 문서·참조·배열·인덱스 |
 | `step-6` | [step-6.md](./step-6.md) | 생성·목록 조회·한 건 조회 반복 실습 |
 | `step-7` | [step-7.md](./step-7.md) | 수정·삭제·조건 검색 반복 실습 |
+| `step-8` | [step-8.md](./step-8.md) | 복합 JSON·전체 CRUD·집계 종합 실습 |

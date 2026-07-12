@@ -2,8 +2,10 @@ const assert = require("node:assert/strict")
 const test = require("node:test")
 const {
   createBookDocument,
+  createReviewDocument,
   escapeRegex,
   parseCategories,
+  parseScore,
   parseStock,
 } = require("../lib/bookInput")
 
@@ -41,4 +43,19 @@ test("createBookDocument는 CLI 값을 중첩 문서로 바꾼다", () => {
   assert.equal(book.author.name, "테스트 저자")
   assert.equal(book.inventory.stock, 2)
   assert.deepEqual(book.categories, ["database", "mongodb"])
+})
+
+test("parseScore는 1부터 5 사이 정수만 허용한다", () => {
+  assert.equal(parseScore("5"), 5)
+  assert.throws(() => parseScore("0"), /1부터 5/)
+  assert.throws(() => parseScore("6"), /1부터 5/)
+})
+
+test("createReviewDocument는 리뷰 입력을 중첩 문서로 바꾼다", () => {
+  const review = createReviewDocument(["민지", "4", "도움이 됐어요."])
+
+  assert.equal(review.reviewer, "민지")
+  assert.equal(review.score, 4)
+  assert.equal(review.comment, "도움이 됐어요.")
+  assert.ok(review.createdAt instanceof Date)
 })

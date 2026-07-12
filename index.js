@@ -1,5 +1,6 @@
 const {
   createBookDocument,
+  createReviewDocument,
   escapeRegex,
   parseStock,
 } = require("./lib/bookInput")
@@ -22,7 +23,11 @@ MongoDB CRUD 응용
   npm start -- search <keyword> [minStock]
   npm start -- update-stock <isbn> <stock>
   npm start -- add-category <isbn> <category>
+  npm start -- add-review <isbn> <reviewer> <score> <comment>
   npm start -- remove <isbn> confirm
+
+종합 조회:
+  npm start -- stats
 `)
 }
 
@@ -150,6 +155,30 @@ async function addCategory(books, isbn, categoryValue) {
   await getBook(books, isbn)
 }
 
+async function addReview(books, isbn, args) {
+  const review = createReviewDocument(args)
+  const target = await books.findOne(
+    { isbn },
+    { projection: { _id: 0, isbn: 1, title: 1 } },
+  )
+
+  if (!target) {
+    console.log("리뷰를 추가할 도서를 찾지 못했습니다.")
+    return
+  }
+
+  console.log("리뷰 추가 대상", target)
+  const result = await books.updateOne(
+    { isbn },
+    {
+      $push: { reviews: review },
+      $set: { updatedAt: new Date() },
+    },
+  )
+  console.log(`리뷰 추가 결과: ${result.modifiedCount}건`)
+  await getBook(books, isbn)
+}
+
 async function removeBook(books, isbn, confirmation) {
   const target = await books.findOne(
     { isbn },
@@ -172,6 +201,58 @@ async function removeBook(books, isbn, confirmation) {
   console.log(`삭제 결과: ${result.deletedCount}건`)
 }
 
+async function showStats(books) {
+  const inventorySummary = await books
+    .aggregate([
+      {
+        $group: {
+          _id: null,
+          bookCount: { $sum: 1 },
+          totalStock: { $sum: "$inventory.stock" },
+          averageStock: { $avg: "$inventory.stock" },
+        },
+      },
+      { $project: { _id: 0 } },
+    ])
+    .toArray()
+
+  const categorySummary = await books
+    .aggregate([
+      { $unwind: "$categories" },
+      {
+        $group: {
+          _id: "$categories",
+          bookCount: { $sum: 1 },
+          totalStock: { $sum: "$inventory.stock" },
+        },
+      },
+      { $sort: { bookCount: -1, _id: 1 } },
+    ])
+    .toArray()
+
+  const reviewSummary = await books
+    .aggregate([
+      { $unwind: "$reviews" },
+      {
+        $group: {
+          _id: "$isbn",
+          title: { $first: "$title" },
+          reviewCount: { $sum: 1 },
+          averageScore: { $avg: "$reviews.score" },
+        },
+      },
+      { $sort: { averageScore: -1, title: 1 } },
+    ])
+    .toArray()
+
+  console.log("전체 재고 요약")
+  console.table(inventorySummary)
+  console.log("카테고리별 요약")
+  console.table(categorySummary)
+  console.log("리뷰가 있는 도서 요약")
+  console.table(reviewSummary)
+}
+
 async function main() {
   const [command = "help", ...args] = process.argv.slice(2)
 
@@ -192,7 +273,9 @@ async function main() {
       search: () => searchBooks(books, args[0], args[1]),
       "update-stock": () => updateStock(books, args[0], args[1]),
       "add-category": () => addCategory(books, args[0], args[1]),
+      "add-review": () => addReview(books, args[0], args.slice(1)),
       remove: () => removeBook(books, args[0], args[1]),
+      stats: () => showStats(books),
     }
 
     const runCommand = commands[command]
