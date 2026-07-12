@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "check": "node --check index.js && node --check lib/mongodb.js && node --check lib/sampleBooks.js"
+    "check": "node --check index.js && node --check lib/mongodb.js && node --check lib/sampleBooks.js && node --check lib/bookInput.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=22.13.0"

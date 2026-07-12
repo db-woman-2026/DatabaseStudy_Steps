@@ -21,3 +21,4 @@
 | `step-3` | [step-3.md](./step-3.md) | 필터·집계·수정·트랜잭션 |
 | `step-4` | [step-4.md](./step-4.md) | MongoDB 연결·JSON 문서 저장·기본 조회 |
 | `step-5` | [step-5.md](./step-5.md) | 중첩 문서·참조·배열·인덱스 |
+| `step-6` | [step-6.md](./step-6.md) | 생성·목록 조회·한 건 조회 반복 실습 |

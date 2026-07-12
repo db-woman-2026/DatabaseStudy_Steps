@@ -1,77 +1,108 @@
+const { createBookDocument } = require("./lib/bookInput")
 const { sampleBooks } = require("./lib/sampleBooks")
 const { withDatabase } = require("./lib/mongodb")
 
-const samplePublishers = [
-  {
-    code: "DATA-LAB",
-    name: "데이터 연구소",
-    website: "https://example.com/data-lab",
-  },
-  {
-    code: "WEB-BOOKS",
-    name: "웹북스",
-    website: "https://example.com/web-books",
-  },
-]
+function showHelp() {
+  console.log(`
+MongoDB CRUD 기초
+
+사용법:
+  npm start -- seed
+  npm start -- list [category]
+  npm start -- get <isbn>
+  npm start -- add <isbn> <title> <author> <stock> [categories]
+
+예시:
+  npm start -- list database
+  npm start -- get 978-00-0001
+  npm start -- add 978-00-0099 "새 도서" "학생 저자" 3 "database,mongodb"
+`)
+}
+
+async function prepareCollection(database) {
+  const books = database.collection("books_course")
+  await books.createIndex({ isbn: 1 }, { unique: true })
+  await books.createIndex({ categories: 1 })
+  return books
+}
+
+async function seedBooks(books) {
+  await books.deleteMany({})
+  const result = await books.insertMany(sampleBooks)
+  console.log(`샘플 도서 ${result.insertedCount}권 생성`)
+}
+
+async function listBooks(books, category) {
+  const filter = category ? { categories: category.toLowerCase() } : {}
+  const rows = await books
+    .find(filter, {
+      projection: {
+        _id: 0,
+        isbn: 1,
+        title: 1,
+        "author.name": 1,
+        categories: 1,
+        "inventory.stock": 1,
+      },
+    })
+    .sort({ title: 1 })
+    .toArray()
+
+  console.log(`조회 결과: ${rows.length}권`)
+  console.log(JSON.stringify(rows, null, 2))
+}
+
+async function getBook(books, isbn) {
+  if (!isbn) {
+    throw new Error("조회할 isbn을 입력하세요.")
+  }
+
+  const book = await books.findOne({ isbn }, { projection: { _id: 0 } })
+
+  if (!book) {
+    console.log("도서를 찾지 못했습니다.")
+    return
+  }
+
+  console.log(JSON.stringify(book, null, 2))
+}
+
+async function addBook(books, args) {
+  const book = createBookDocument(args)
+  const result = await books.insertOne(book)
+  console.log(`도서 생성 완료: ${book.isbn}, id=${result.insertedId}`)
+  await getBook(books, book.isbn)
+}
 
 async function main() {
+  const [command = "help", ...args] = process.argv.slice(2)
+
+  if (command === "help") {
+    showHelp()
+    return
+  }
+
   await withDatabase(async (database, databaseName) => {
-    const books = database.collection("books_step5")
-    const publishers = database.collection("publishers_step5")
-
-    await books.deleteMany({})
-    await publishers.deleteMany({})
-
-    await publishers.createIndex({ code: 1 }, { unique: true })
-    await books.createIndex({ isbn: 1 }, { unique: true })
-    await books.createIndex({ categories: 1 })
-    await books.createIndex({ "inventory.stock": 1 })
-
-    await publishers.insertMany(samplePublishers)
-    await books.insertMany(sampleBooks)
-
+    const books = await prepareCollection(database)
     console.log(`database: ${databaseName}`)
-    console.log("books_step5 인덱스")
-    console.table(
-      (await books.indexes()).map((index) => ({
-        name: index.name,
-        key: JSON.stringify(index.key),
-        unique: index.unique ?? false,
-      })),
-    )
 
-    const databaseBooks = await books
-      .find(
-        { categories: "database" },
-        {
-          projection: {
-            _id: 0,
-            title: 1,
-            "author.name": 1,
-            publisherCode: 1,
-            "inventory.stock": 1,
-          },
-        },
-      )
-      .sort({ publishedYear: -1 })
-      .toArray()
-
-    console.log("database 카테고리 도서")
-    console.log(JSON.stringify(databaseBooks, null, 2))
-
-    const publisher = await publishers.findOne(
-      { code: databaseBooks[0].publisherCode },
-      { projection: { _id: 0 } },
-    )
-
-    console.log("publisherCode로 참조한 출판사")
-    console.log(publisher)
+    if (command === "seed") {
+      await seedBooks(books)
+    } else if (command === "list") {
+      await listBooks(books, args[0])
+    } else if (command === "get") {
+      await getBook(books, args[0])
+    } else if (command === "add") {
+      await addBook(books, args)
+    } else {
+      showHelp()
+      throw new Error(`알 수 없는 command: ${command}`)
+    }
   })
 }
 
 main().catch((error) => {
-  console.error("MongoDB 실습 실행 실패")
+  console.error("MongoDB CRUD 실습 실패")
   console.error(error.message)
-  console.error("MongoDB 서버와 .env의 MONGODB_URI를 확인하세요.")
   process.exitCode = 1
 })
