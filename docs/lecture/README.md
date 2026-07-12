@@ -18,3 +18,4 @@
 | --- | --- | --- |
 | `step-1` | [step-1.md](./step-1.md) | SQLite 데이터베이스와 첫 테이블 |
 | `step-2` | [step-2.md](./step-2.md) | 기본키·외래키·제약조건·JOIN |
+| `step-3` | [step-3.md](./step-3.md) | 필터·집계·수정·트랜잭션 |
