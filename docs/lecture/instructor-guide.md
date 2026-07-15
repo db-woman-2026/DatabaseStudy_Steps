@@ -94,7 +94,7 @@ RDBMS와 MongoDB 중 무엇이 더 좋다는 결론을 요구하지 않습니다
 - `LEFT JOIN`의 왼쪽 행은 연결 상대가 없어도 남는가?
 - `COUNT(*)`와 `COUNT(books.id)`는 연결된 책이 없는 저자에서 어떻게 다른가?
 - `categories: "database"`가 배열 필드와 어떻게 일치하는가?
-- `$addToSet`을 같은 값으로 두 번 실행하면 `matchedCount`와 `modifiedCount`는 각각 얼마인가?
+- `$addToSet`을 같은 값으로 두 번 실행할 때 배열은 어떻게 되며, 같은 update의 `updatedAt` 변경이 `modifiedCount` 해석에 어떤 영향을 주는가?
 - 빈 `reviews` 배열에 `$unwind`를 적용하면 그 도서 문서는 결과에 남는가?
 
 ### 설계 질문
