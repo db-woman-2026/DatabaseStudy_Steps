@@ -1,6 +1,6 @@
 # DatabaseStudy_Steps
 
-`DatabaseStudy_Steps`는 RDBMS 기본 원리와 MongoDB 실전 CRUD를 단계별로 학습하는 독립 강의 프로젝트입니다.
+`DatabaseStudy_Steps`는 하루 6시간씩 8일, 총 48시간 동안 RDBMS 기본 원리와 MongoDB 실전 CRUD를 단계별로 학습하는 독립 강의 프로젝트입니다.
 
 Node.js의 변수, 함수, 배열, 객체, 비동기 실행을 이미 한 번 경험했다고 가정하지만 `NodeStudy_Steps`의 코드나 데이터는 가져오지 않습니다. 이 저장소는 도서 관리라는 별도 도메인, 별도 데이터, 별도 Git 이력을 사용합니다.
 
@@ -45,14 +45,18 @@ git merge-base --is-ancestor step-N step-(N+1)
 
 8일 중 RDBMS 3일, MongoDB 5일로 구성해 약 4:6의 학습 비중을 갖습니다.
 
+전체 48시간의 블록별 시간표, 산출물, 평가 기준은 [8일·48시간 상세 강의 계획](./docs/lecture/course-plan.md)에서 확인합니다. 수업을 진행하는 강사는 [강사용 운영 가이드](./docs/lecture/instructor-guide.md)를 함께 사용합니다.
+
 ## 학습 방법
 
 1. `docs/basic/README.md`에서 현재 단계와 연결되는 기초 문서를 읽습니다.
 2. 학습할 브랜치로 이동합니다.
-3. `docs/lecture/step-N.md`의 목표와 코드 흐름을 먼저 확인합니다.
-4. `npm start`로 현재 단계의 예제를 실행합니다.
-5. 문서의 연습 문제를 직접 수정하고 다시 실행합니다.
-6. 다음 브랜치로 이동해 이전 단계에서 무엇이 달라졌는지 비교합니다.
+3. `docs/lecture/step-N.md`의 360분 시간표와 완료 기준을 먼저 확인합니다.
+4. 각 실습의 결과를 실행 전에 예측합니다.
+5. `npm start`로 현재 단계의 기준 예제를 실행합니다.
+6. 처리 건수와 저장된 데이터를 다시 조회해 예상과 비교합니다.
+7. 안내 실습과 독립 실습에서 조건·값·도메인을 바꿔 반복합니다.
+8. 출구 티켓과 완료 기준을 확인한 뒤 다음 브랜치로 이동합니다.
 
 ```bash
 git switch step-1
@@ -95,7 +99,9 @@ npm start
 ## 문서 구조
 
 - `docs/basic/`: 데이터베이스 개념을 코드 실행 전에 읽는 선수 자료
-- `docs/lecture/`: 현재 브랜치에서 직접 수행할 단계별 실습 자료
+- `docs/lecture/course-plan.md`: 8일·48시간 전체 강의 설계와 평가 기준
+- `docs/lecture/instructor-guide.md`: 강사용 운영·질문·피드백 가이드
+- `docs/lecture/step-N.md`: 현재 브랜치에서 직접 수행할 6시간 상세 강의 자료
 - `README.md`: 전체 과정, 브랜치 체인, 실행 환경 안내
 
 ## 안전 원칙
