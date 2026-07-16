@@ -1,16 +1,16 @@
-# Database Basic Course
+# 데이터베이스 기초
 
-이 폴더는 단계별 실습 전에 읽는 Database 선수 학습 자료입니다. 네 문서는 단순 용어집이 아니라 본 실습에서 반복 사용할 판단 기준, 비교 예제, 확인 문제와 해설을 제공합니다.
+단계별 실습 전에 읽을 데이터베이스 기초 자료입니다. 네 문서에서 판단 기준, 비교 예제, 확인 문제를 다룹니다.
 
 Node.js 문법을 다시 처음부터 설명하지는 않습니다. 대신 같은 JavaScript 객체가 RDBMS의 행과 MongoDB의 문서에서 어떻게 다르게 저장되는지 비교하며 읽습니다.
 
 ## 권장 순서
 
-| 문서 | 핵심 내용 | 연결 단계 | 권장 학습 시간 |
+| 문서 | 내용 | 연결 단계 | 권장 학습 시간 |
 | --- | --- | --- | --- |
-| [01. Database와 RDBMS](./01-database-rdbms.md) | DBMS, 테이블, schema, 키, NULL, 제약조건, SQLite | `step-1` | 40~60분 |
+| [01. 데이터베이스와 RDBMS](./01-database-rdbms.md) | DBMS, 테이블, 스키마, 키, NULL, 제약조건, SQLite | `step-1` | 40~60분 |
 | [02. SQL과 관계](./02-sql-relations.md) | SQL, 키, 관계, 정규화, JOIN, 집계, 트랜잭션 | `step-2~3` | 60~90분 |
-| [03. JSON과 MongoDB](./03-json-mongodb.md) | JSON/BSON, 문서, 포함/참조, 배열, cursor, 인덱스 | `step-4~5` | 60~90분 |
+| [03. JSON과 MongoDB](./03-json-mongodb.md) | JSON/BSON, 문서, 포함/참조, 배열, 커서, 인덱스 | `step-4~5` | 60~90분 |
 | [04. CRUD 비교](./04-crud-comparison.md) | SQL/MongoDB CRUD, 결과 카운트, 연산자, 삭제, 원자성, 테스트 | `step-6~8` | 60~90분 |
 
 각 문서는 용어를 외우기보다 “어떤 데이터를 어떤 구조에 저장하고, 어떤 조건으로 다시 찾는가”에 집중해서 읽습니다.
