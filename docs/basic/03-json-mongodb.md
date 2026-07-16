@@ -1,6 +1,6 @@
 # 03. JSON, BSON과 MongoDB
 
-4~5일차 전에 읽을 자료입니다. MongoDB를 단순한 JSON 파일 저장소로 보지 않고, 문서 저장·조회·인덱스·원자적 변경을 제공하는 DBMS로 살펴봅니다.
+4~5일차 전에 읽을 자료입니다. MongoDB는 문서 저장·조회·인덱스·원자적 변경을 제공하는 DBMS입니다.
 
 ## 1. JSON 복습
 
@@ -418,7 +418,7 @@ await books.createIndex({ categories: 1, publishedYear: -1 })
 | 구조 정의 | 테이블 스키마와 constraint | 문서 구조, 앱 검증, 스키마 validation |
 | 관계 표현 | 외래 키 | embedding 또는 reference |
 | 함께 읽기 | JOIN | 한 문서 또는 `$lookup`/추가 조회 |
-| 중첩 구조 | 관련 테이블로 분리 | 객체·배열로 자연스럽게 포함 |
+| 중첩 구조 | 관련 테이블로 분리 | 객체·배열로 포함 |
 | 고유성 | PRIMARY KEY, UNIQUE | `_id`, unique index |
 | 다중 변경 | transaction | 문서 단위 원자성, 필요 시 transaction |
 
