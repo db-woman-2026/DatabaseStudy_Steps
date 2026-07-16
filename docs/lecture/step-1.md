@@ -375,7 +375,7 @@ PowerShell에서는 다음 명령을 사용합니다.
 
 ```powershell
 Remove-Item data/library-step-1.sqlite
-Get-Item data
+Get-ChildItem data
 npm.cmd start
 Get-Item data/library-step-1.sqlite
 ```
