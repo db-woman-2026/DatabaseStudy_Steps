@@ -365,7 +365,7 @@ categories unwind 후: 6
 category별 group 결과:
 
 - beginner: book 2, total stock 4
-- 데이터베이스: book 2, total stock 8
+- `database`: book 2, total stock 8
 - mongodb: book 1, total stock 5
 - nodejs: book 1, total stock 1
 
@@ -450,7 +450,7 @@ const reviewSummary = await books
 }
 ```
 
-빈 배열/missing/null인 book도 한 출력 문서로 남깁니다. 그러나 단순히 `$sum: 1`을 사용하면 빈 review book도 reviewCount 1처럼 잘못 셀 수 있습니다.
+빈 배열/missing/null인 book도 한 출력 문서로 남깁니다. 이 상태에서 `$sum: 1`을 사용하면 빈 review book도 reviewCount 1로 잘못 셉니다.
 
 조건 건수가 필요합니다.
 
@@ -493,7 +493,7 @@ SQL JOIN/GROUP BY 디버깅과 마찬가지로 중간 데이터를 봅니다.
 
 ## 4-3. `$match` 위치 — 10분
 
-데이터베이스 category의 review만 보고 싶다면 가능한 한 일찍 필터합니다.
+`database` category의 review만 보고 싶다면 가능한 한 일찍 필터합니다.
 
 ```js
 [
@@ -570,7 +570,7 @@ STUDENT book을 add하면 새 group이 생깁니다. publisher name이 필요하
 | 순서 | 명령 | book 건수 | target stock | categories | reviews | 검증 |
 | ---: | --- | ---: | ---: | --- | ---: | --- |
 | 0 | seed | 3 | - | - | - | list/stats |
-| 1 | add | 4 | 4 | 데이터베이스,mongodb | 0 | get |
+| 1 | add | 4 | 4 | `database`, `mongodb` | 0 | get |
 | 2 | update-stock | 4 | 7 | 동일 | 0 | get |
 | 3 | add-category | 4 | 7 | +practice | 0 | get |
 | 4 | add-review | 4 | 7 | 동일 | 1 | get |
@@ -627,7 +627,7 @@ confirm 없는 remove를 먼저 실행해 state가 유지됨을 확인합니다.
 - bookCount: 4
 - totalStock: 기존 9 + 7 = 16
 - averageStock: 4
-- 데이터베이스 category: 기존 2 + 새 1 = 3권, stock 15
+- `database` category: 기존 2 + 새 1 = 3권, stock 15
 - mongodb category: 기존 1 + 새 1 = 2권, stock 12
 - practice category: 1권, stock 7
 - 새 book review: 건수 1, average 5
