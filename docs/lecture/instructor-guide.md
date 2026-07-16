@@ -6,6 +6,8 @@
 
 ### 저장소
 
+> Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
+
 ```bash
 git status
 git branch --show-current
@@ -29,6 +31,14 @@ npm start
 cp .env.example .env
 npm ci
 npm start
+```
+
+PowerShell에서는 `.env`를 다음과 같이 준비합니다.
+
+```powershell
+Copy-Item .env.example .env
+npm.cmd ci
+npm.cmd start
 ```
 
 실습 시작 전에 강사 화면에서 성공 실행 한 번, 의도된 실패 실행 한 번을 준비합니다. 오류 메시지는 수업의 방해물이 아니라 데이터 규칙이 실제로 작동한다는 증거로 다룹니다.
