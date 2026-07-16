@@ -184,8 +184,8 @@ seed 기준 예상:
 
 | 명령 | 예상 | 이유 |
 | --- | ---: | --- |
-| search 데이터베이스 | 2 | category 두 권 |
-| search 데이터베이스 4 | 1 | stock 5 한 권 |
+| search database | 2 | category 두 권 |
+| search database 4 | 1 | stock 5 한 권 |
 | search 김데이터 | 1 | author.name |
 | search Node.js | 1 | title |
 | search beginner | 2 | category 두 권 |
