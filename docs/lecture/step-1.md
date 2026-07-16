@@ -52,6 +52,8 @@
 
 ### 3.1 브랜치와 작업 상태
 
+> Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
+
 ```bash
 git switch step-1
 git branch --show-current
@@ -367,6 +369,15 @@ rm data/library-step-1.sqlite
 ls -l data
 npm start
 ls -l data/library-step-1.sqlite
+```
+
+PowerShell에서는 다음 명령을 사용합니다.
+
+```powershell
+Remove-Item data/library-step-1.sqlite
+Get-Item data
+npm.cmd start
+Get-Item data/library-step-1.sqlite
 ```
 
 첫 `rm`은 현재 단계 전용 파일에만 사용합니다. 파일이 없다는 메시지가 나와도 괜찮습니다. `npm start` 뒤 SQLite 파일이 다시 생기는지 확인합니다.
@@ -919,6 +930,13 @@ name TEXT NOT NULL CHECK (length(trim(name)) > 0)
 ```bash
 node --version
 which node
+```
+
+PowerShell에서는 다음 명령을 사용합니다.
+
+```powershell
+node --version
+(Get-Command node).Source
 ```
 
 Node.js 22.13 이상인지 확인합니다. IDE 터미널과 일반 터미널이 다른 Node.js를 사용할 수도 있습니다.
