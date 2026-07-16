@@ -56,7 +56,7 @@ Node.js 자체를 다시 가르치는 과정은 아니지만, 데이터베이스
 | 5일차 | 문서 모델링과 인덱스 | embedding/reference, 접근 패턴, 일관성, unique/multikey index, 프로젝션 | 모델링 의사결정서와 인덱스 근거 |
 | 6일차 | MongoDB Create·Read | CLI 입력 검증, insertOne, find/findOne, 필터, 프로젝션, 정렬 | 반복 가능한 seed→create→read 로그 |
 | 7일차 | MongoDB Update·Delete·Search | `$set`, `$inc`, `$addToSet`, `$pull`, 정규식, 안전 삭제, 결과 카운트 | 변경 전후 검증표와 CRUD 확장안 |
-| 8일차 | 복합 문서·집계·종합 CRUD | `$push`, 배열 문서, aggregation 파이프라인, `$unwind`, `$group`, 종합 설계 | 완주 시나리오, 미니 프로젝트, 회고 |
+| 8일차 | 복합 문서·집계·종합 CRUD | `$push`, 배열 문서, aggregation 파이프라인, `$unwind`, `$group`, 종합 설계 | 전체 실행 시나리오, 미니 프로젝트, 회고 |
 
 ## 5. 일차별 360분 세부 배분
 
@@ -145,7 +145,7 @@ Node.js 자체를 다시 가르치는 과정은 아니지만, 데이터베이스
 | 01:00~02:00 | 리뷰 Create/Update | `$push`, 대상 확인, 수정 결과, 중복 정책 토론 |
 | 02:00~03:00 | 파이프라인 사고방식 | 스테이지 순서, 입력/출력 문서 추적, `$match/$project` |
 | 03:00~04:00 | 집계 핵심 | `$unwind`, `$group`, `$sum/$avg/$first`, `$sort` |
-| 04:00~05:00 | 전체 CRUD 완주 | 새 도서 생성부터 검색·수정·리뷰·삭제·최종 검증 |
+| 04:00~05:00 | 전체 CRUD 실행 | 새 도서 생성부터 검색·수정·리뷰·삭제·최종 검증 |
 | 05:00~06:00 | 미니 프로젝트와 평가 | 요구사항 구현안, RDBMS/MongoDB 선택 근거, 회고 |
 
 ## 6. 단계 사이 학습 연결
