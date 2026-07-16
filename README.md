@@ -79,6 +79,14 @@ npm ci
 npm start
 ```
 
+Windows 11 PowerShell에서는 [환경 준비](./docs/windows-11.md)를 먼저 확인하고 다음 명령을 사용합니다.
+
+```powershell
+Copy-Item .env.example .env
+npm.cmd ci
+npm.cmd start
+```
+
 기본 데이터베이스 이름은 `database_study_course`입니다. 실습 코드는 안전을 위해 `database_study_`로 시작하지 않는 데이터베이스 이름을 거부합니다.
 
 ## 프로젝트 구조
