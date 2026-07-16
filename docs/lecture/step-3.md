@@ -98,7 +98,7 @@ npm start
 
 # 1교시. SELECT와 WHERE — 60분
 
-## 1-1. 2일차 관계 회수 — 5분
+## 1-1. 2일차 관계 회수 — 10분
 
 다음 문장을 완성합니다.
 
@@ -159,7 +159,7 @@ WHERE published_year >= ? AND stock >= ?;
 
 서로 다른 조건을 모두 만족해야 하면 `AND`, 하나 이상이면 `OR`, 조건을 뒤집으면 `NOT`입니다.
 
-괄호가 중요합니다.
+괄호가 없으면 `AND`와 `OR`의 우선순위 때문에 의도와 다른 행이 포함될 수 있습니다.
 
 ```sql
 WHERE (author_id = 1 OR author_id = 2)
