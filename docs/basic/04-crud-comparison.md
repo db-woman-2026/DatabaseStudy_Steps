@@ -1,6 +1,6 @@
 # 04. SQL과 MongoDB CRUD 비교
 
-이 문서는 6~8일차의 선수 자료입니다. CRUD 메서드 이름을 대응해 외우는 것보다, 입력·조건·결과·검증이라는 공통 구조와 제품별 차이를 이해하는 것이 목표입니다.
+6~8일차 전에 읽을 자료입니다. SQL과 MongoDB의 CRUD를 입력, 조건, 결과, 검증 순서로 비교합니다.
 
 ## 1. CRUD란 무엇인가
 
@@ -105,13 +105,13 @@ console.log(result.insertedId)
 
 애플리케이션 사전 중복 조회는 친절한 메시지에 도움이 되지만, 동시 요청까지 고려하면 DB의 고유 제약이 최종 보장이어야 합니다.
 
-## 5. Read: filter, projection, sort
+## 5. Read: 필터, 프로젝션, 정렬
 
 조회는 세 질문으로 나눕니다.
 
-1. 어떤 데이터를 고를 것인가? — filter/WHERE
-2. 어떤 필드를 돌려줄 것인가? — projection/SELECT list
-3. 어떤 순서로 볼 것인가? — sort/ORDER BY
+1. 어떤 데이터를 고를 것인가? — 필터/WHERE
+2. 어떤 필드를 돌려줄 것인가? — 프로젝션/SELECT list
+3. 어떤 순서로 볼 것인가? — 정렬/ORDER BY
 
 ### SQL
 
@@ -142,7 +142,7 @@ const rows = await books
 
 ## 6. 조건 비교
 
-| 의미 | SQL | MongoDB filter |
+| 의미 | SQL | MongoDB 필터 |
 | --- | --- | --- |
 | 같음 | `stock = 3` | `{ stock: 3 }` 또는 `{ stock: { $eq: 3 } }` |
 | 이상 | `stock >= 3` | `{ stock: { $gte: 3 } }` |
@@ -360,8 +360,8 @@ const result = await books.updateMany(
 
 여러 건 작업에서는 다음을 추가합니다.
 
-- 샘플 대상 몇 건을 projection으로 출력
-- 전체 대상 count
+- 샘플 대상 몇 건을 프로젝션으로 출력
+- 전체 대상 건수
 - 예상 최대 건수 guard
 - batch 또는 transaction 필요성 검토
 - 변경 로그와 롤백/복원 계획
@@ -418,7 +418,7 @@ const result = await books.updateOne(
 )
 ```
 
-한 문서 안의 변경은 원자적으로 처리됩니다. 여러 문서/collection 변경을 하나로 묶어야 한다면 transaction이나 다른 일관성 설계를 검토합니다.
+한 문서 안의 변경은 원자적으로 처리됩니다. 여러 문서/컬렉션 변경을 하나로 묶어야 한다면 transaction이나 다른 일관성 설계를 검토합니다.
 
 ## 17. 오류와 0건을 구분하기
 
@@ -480,7 +480,7 @@ Create와 Update 기능에는 최소 다음 사례를 시험합니다.
 - Update: 작성자 본인의 내용 수정
 - Delete: 실제 제거 또는 삭제됨 표시
 
-권한 조건을 update/delete filter에 포함해야 하는 이유를 생각할 수 있습니다.
+권한 조건을 update/delete 필터에 포함해야 하는 이유를 생각할 수 있습니다.
 
 ## 20. 개념 확인 문제
 
@@ -491,7 +491,7 @@ Create와 Update 기능에는 최소 다음 사례를 시험합니다.
 5. 재고 감소에 읽기 후 `$set`보다 조건부 `$inc`가 유리한 이유는 무엇인가요?
 6. soft delete의 이점과 비용을 하나씩 적으세요.
 7. `updateMany()` 전에 `countDocuments()`와 샘플 조회를 하는 이유는 무엇인가요?
-8. 입력 정규식 escape와 SQL placeholder의 공통 목적은 무엇인가요?
+8. 입력 정규식 escape와 SQL 플레이스홀더의 공통 목적은 무엇인가요?
 
 <details>
 <summary>개념 확인 해설</summary>
@@ -510,9 +510,9 @@ Create와 Update 기능에는 최소 다음 사례를 시험합니다.
 ## 21. 6~8일차 준비 체크리스트
 
 - [ ] Create 입력을 저장 문서로 바꾸기 전 검증 항목을 말할 수 있습니다.
-- [ ] filter, projection, sort를 구분할 수 있습니다.
+- [ ] 필터, 프로젝션, 정렬을 구분할 수 있습니다.
 - [ ] `$set`, `$inc`, `$push`, `$addToSet`, `$pull`의 차이를 설명할 수 있습니다.
-- [ ] matched/modified/deleted count를 읽을 수 있습니다.
+- [ ] matched/modified/deleted 건수를 읽을 수 있습니다.
 - [ ] update/delete 전후 안전 루프를 수행할 수 있습니다.
 - [ ] hard delete와 soft delete를 요구사항에 따라 비교할 수 있습니다.
 - [ ] 멱등적인 작업과 그렇지 않은 작업을 구분할 수 있습니다.
