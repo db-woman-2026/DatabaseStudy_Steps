@@ -8,12 +8,17 @@ const {
 
 test("parseStock은 0 이상의 정수를 반환한다", () => {
   assert.equal(parseStock("3"), 3)
+  assert.equal(parseStock(" 3 "), 3)
   assert.equal(parseStock(0), 0)
 })
 
-test("parseStock은 음수와 소수를 거부한다", () => {
+test("parseStock은 빈 값, 음수, 소수를 거부한다", () => {
+  assert.throws(() => parseStock(""), /stock 값을 입력/)
+  assert.throws(() => parseStock("   "), /stock 값을 입력/)
+  assert.throws(() => parseStock(), /stock 값을 입력/)
   assert.throws(() => parseStock("-1"), /0 이상의 정수/)
   assert.throws(() => parseStock("1.5"), /0 이상의 정수/)
+  assert.throws(() => parseStock("abc"), /0 이상의 정수/)
 })
 
 test("parseCategories는 공백과 중복을 정리한다", () => {

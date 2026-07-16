@@ -33,7 +33,8 @@ async function seedBooks(books) {
 }
 
 async function listBooks(books, category) {
-  const filter = category ? { categories: category.toLowerCase() } : {}
+  const normalizedCategory = String(category ?? "").trim().toLowerCase()
+  const filter = normalizedCategory ? { categories: normalizedCategory } : {}
   const rows = await books
     .find(filter, {
       projection: {
