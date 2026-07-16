@@ -258,7 +258,7 @@ publisher 정보는 독립적으로 관리되고 여러 책이 공유하며 webs
 
 ## 2-6. snapshot vs live reference — 5분
 
-주문 당시 상품 이름과 가격은 이후 상품 수정에 따라 바뀌면 안 될 수 있습니다. 이 경우 중복은 오류가 아니라 과거 사실을 보존하는 snapshot입니다. 반대로 publisher website는 최신 값을 원하므로 live reference가 자연스럽습니다.
+주문 당시 상품 이름과 가격은 이후 상품 수정에 따라 바뀌면 안 될 수 있습니다. 이 경우 중복은 오류가 아니라 과거 사실을 보존하는 snapshot입니다. publisher website처럼 최신 값을 보여줘야 하는 필드는 live reference 후보입니다.
 
 ### 2교시 체크포인트
 
@@ -507,7 +507,7 @@ const databaseBooks = await books
 
 접근 패턴:
 
-- equality/배열 필터: categories = 데이터베이스
+- equality/배열 필터: categories = `database`
 - 정렬: publishedYear descending
 - 프로젝션: title, author.name, publisherCode, stock
 - 결과: 여러 문서
@@ -522,7 +522,7 @@ const databaseBooks = await books
 await books.createIndex({ categories: 1, publishedYear: -1 })
 ```
 
-필드 순서가 중요합니다. index prefix 관점에서 이 index는 categories 조건에서 시작하는 쿼리에 자연스럽습니다. publishedYear만 조회할 때도 항상 최선이라고 볼 수 없습니다.
+이 index는 categories가 첫 필드이므로 categories 조건에서 시작하는 쿼리에 사용할 수 있습니다. publishedYear만 조회하는 쿼리에는 항상 최선이라고 볼 수 없습니다.
 
 다른 접근 패턴:
 
@@ -759,7 +759,7 @@ if (databaseBooks.length === 0) {
 
 ## 7-4. step 전용 컬렉션
 
-step-4의 `books_step4`와 step-5의 `books_step5`는 서로 다른 컬렉션입니다. 이전 단계 데이터를 migration하는 수업이 아니라 같은 예시을 다른 모델링 목적에 맞춰 재현합니다.
+step-4의 `books_step4`와 step-5의 `books_step5`는 서로 다른 컬렉션입니다. 이전 단계 데이터를 migration하는 수업이 아니라 같은 예시를 다른 모델링 목적에 맞춰 재현합니다.
 
 ---
 
@@ -903,7 +903,7 @@ publisher exact 필터와 최신순 목록에 맞을 수 있습니다.
 
 ## 쿼리와 프로젝션
 
-16. 데이터베이스 category이며 stock 2 이상인 book을 찾습니다.
+16. `database` category이며 stock 2 이상인 book을 찾습니다.
 17. title, author.name, stock만 프로젝션합니다.
 18. publisherCode별 book 목록을 최신순으로 찾습니다.
 19. 필요한 publisher code를 중복 제거해 `$in` 한 번으로 조회합니다.
@@ -1050,7 +1050,7 @@ await books
 2. categories/reviews 성장 비교
 3. ISBN unique index와 중복 실패
 4. categories·stock index 목록 확인
-5. 데이터베이스 category 조회와 publisher 추가 조회
+5. `database` category 조회와 publisher 추가 조회
 
 ## 확장 경로
 
