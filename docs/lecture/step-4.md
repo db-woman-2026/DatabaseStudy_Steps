@@ -180,7 +180,7 @@ const jsonText = JSON.stringify(book)
 | `author` | Object | embedded 문서 |
 | `_id` | 생략 | 기본 ObjectId 생성 |
 
-`stock: '3'` 문자열과 `stock: 3` 숫자는 다른 타입입니다. 유연한 문서라도 타입 일관성이 조회와 집계에 중요합니다.
+`stock: '3'` 문자열과 `stock: 3` 숫자는 다른 타입입니다. 두 타입이 섞이면 숫자 비교와 집계가 예상과 다르게 동작할 수 있습니다.
 
 ## 1-5. 구조 선택 비교 활동 — 10분
 
@@ -449,16 +449,16 @@ await books.deleteMany({})
 
 | ISBN | categories | stock | reviews |
 | --- | --- | ---: | ---: |
-| 978-00-0001 | 데이터베이스, beginner | 3 | 0 |
-| 978-00-0002 | 데이터베이스, mongodb | 5 | 1 |
-| 978-00-0003 | nodejs, beginner | 1 | 0 |
+| 978-00-0001 | `database`, `beginner` | 3 | 0 |
+| 978-00-0002 | `database`, `mongodb` | 5 | 1 |
+| 978-00-0003 | `nodejs`, `beginner` | 1 | 0 |
 
 실행 전 다음 값을 계산합니다.
 
 - 문서 수: 3
 - 총 재고: 9
-- 데이터베이스 category: 2권
-- beginner category: 2권
+- `database` category: 2권
+- `beginner` category: 2권
 - review가 있는 도서: 1권
 
 이 예측은 8일차 집계에서도 다시 사용합니다.
@@ -735,7 +735,7 @@ const rows = await books
 }
 ```
 
-데이터베이스 category이면서 stock 4 이상인 책은 MongoDB 첫걸음 한 권입니다.
+`database` category이면서 stock 4 이상인 책은 MongoDB 첫걸음 한 권입니다.
 
 명시적 OR:
 
@@ -840,7 +840,7 @@ const rows = await books
 { reviews: { $elemMatch: { score: { $gte: 4 } } } }
 ```
 
-배열 문서 원소 하나가 조건을 만족하는지 찾습니다. 여러 조건이 같은 배열 원소에 적용되어야 할 때 `$elemMatch`가 중요합니다.
+배열 문서 원소 하나가 조건을 만족하는지 찾습니다. 여러 조건이 같은 배열 원소에 적용되어야 할 때 `$elemMatch`로 조건을 묶습니다.
 
 ## 예제 D. 필드 존재 여부
 
@@ -893,14 +893,14 @@ const rows = await books.find(filter).toArray()
 
 1. 예시 book을 한 권 더 추가하고 insertedCount를 확인합니다.
 2. stock 2 이상인 책을 재고 역순으로 조회합니다.
-3. 데이터베이스 category 도서의 title과 author.name만 출력합니다.
+3. `database` category 도서의 title과 author.name만 출력합니다.
 4. 없는 ISBN을 findOne하고 null 메시지를 출력합니다.
 5. publishedYear 2025 이상인 책을 최신순으로 조회합니다.
 
 ## 배열과 중첩
 
 6. beginner category를 가진 책을 찾습니다.
-7. 데이터베이스와 beginner를 모두 가진 책을 `$all`로 찾습니다.
+7. `database`와 `beginner`를 모두 가진 책을 `$all`로 찾습니다.
 8. reviews가 비어 있지 않은 책을 찾습니다.
 9. score 5 리뷰가 있는 책을 `$elemMatch`로 찾습니다.
 10. inventory.location이 A-로 시작하는 도서를 찾는 필터를 작성합니다.
