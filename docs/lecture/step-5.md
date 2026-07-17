@@ -54,13 +54,13 @@
 
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
-```bash
+```powershell
 git switch step-5
 git branch --show-current
 git status
-npm ci
-npm run check
-npm start
+npm.cmd ci
+npm.cmd run check
+npm.cmd start
 ```
 
 MongoDB 서버가 실행 중이고 `.env`가 강의 전용 데이터베이스를 가리켜야 합니다. 오늘 코드는 다음 두 컬렉션만 초기화합니다.

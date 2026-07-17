@@ -11,18 +11,18 @@ function showHelp() {
 MongoDB CRUD 응용
 
 기준 데이터:
-  npm start -- seed
+  npm.cmd start -- seed
 
 생성·조회:
-  npm start -- list [category]
-  npm start -- get <isbn>
-  npm start -- add <isbn> <title> <author> <stock> [categories]
+  npm.cmd start -- list [category]
+  npm.cmd start -- get <isbn>
+  npm.cmd start -- add <isbn> <title> <author> <stock> [categories]
 
 조건 검색·수정·삭제:
-  npm start -- search <keyword> [minStock]
-  npm start -- update-stock <isbn> <stock>
-  npm start -- add-category <isbn> <category>
-  npm start -- remove <isbn> confirm
+  npm.cmd start -- search <keyword> [minStock]
+  npm.cmd start -- update-stock <isbn> <stock>
+  npm.cmd start -- add-category <isbn> <category>
+  npm.cmd start -- remove <isbn> confirm
 `)
 }
 
