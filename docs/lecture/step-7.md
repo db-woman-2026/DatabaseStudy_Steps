@@ -56,21 +56,21 @@
 
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
-```bash
+```powershell
 git switch step-7
 git branch --show-current
 git status
-npm ci
-npm run check
-npm test
-npm start -- help
+npm.cmd ci
+npm.cmd run check
+npm.cmd test
+npm.cmd start -- help
 ```
 
 기준 상태를 만들기 전에 지난 add 데이터를 보존할 필요가 없는지 확인합니다.
 
-```bash
-npm start -- seed
-npm start -- list
+```powershell
+npm.cmd start -- seed
+npm.cmd start -- list
 ```
 
 오늘은 step-6과 같은 `books_course`를 사용합니다.
@@ -92,9 +92,9 @@ npm start -- list
 
 ## 1-1. search 명령 — 10분
 
-```bash
-npm start -- search database
-npm start -- search database 3
+```powershell
+npm.cmd start -- search database
+npm.cmd start -- search database 3
 ```
 
 첫 명령은 keyword만, 두 번째는 keyword와 최소 stock을 함께 사용합니다. 명령 args는 모두 문자열이므로 minStock은 `parseStock()`으로 검증합니다.
@@ -208,8 +208,8 @@ seed 기준 예상:
 
 ## 2-1. update-stock 명령 — 10분
 
-```bash
-npm start -- update-stock 978-00-0001 8
+```powershell
+npm.cmd start -- update-stock 978-00-0001 8
 ```
 
 입력:
@@ -294,10 +294,10 @@ console.log(
 
 ## 2-6. 오류 입력 — 5분
 
-```bash
-npm start -- update-stock 978-00-0001 -1
-npm start -- update-stock 978-00-0001 1.5
-npm start -- update-stock not-found 3
+```powershell
+npm.cmd start -- update-stock 978-00-0001 -1
+npm.cmd start -- update-stock 978-00-0001 1.5
+npm.cmd start -- update-stock not-found 3
 ```
 
 앞 두 개는 validation 오류, 마지막은 정상 없음 메시지입니다. 모두 DB state가 변하지 않아야 합니다.
@@ -315,8 +315,8 @@ npm start -- update-stock not-found 3
 
 ## 3-1. `$addToSet` — 15분
 
-```bash
-npm start -- add-category 978-00-0001 sql
+```powershell
+npm.cmd start -- add-category 978-00-0001 sql
 ```
 
 ```js
@@ -424,14 +424,14 @@ await books.updateOne(
 
 확인 없이 실행:
 
-```bash
-npm start -- remove 978-00-0003
+```powershell
+npm.cmd start -- remove 978-00-0003
 ```
 
 명시적 확인:
 
-```bash
-npm start -- remove 978-00-0003 confirm
+```powershell
+npm.cmd start -- remove 978-00-0003 confirm
 ```
 
 문자열 `confirm`이 정확히 마지막 인자일 때만 삭제합니다.
@@ -673,21 +673,21 @@ await runCommand()
 
 각 단계에서 건수와 바뀐 필드를 기록합니다.
 
-```bash
-npm start -- seed
-npm start -- list
-npm start -- search database 3
-npm start -- add 978-00-0099 "CRUD 응용" "학생 저자" 4 "database,practice"
-npm start -- get 978-00-0099
-npm start -- update-stock 978-00-0099 7
-npm start -- add-category 978-00-0099 mongodb
-npm start -- add-category 978-00-0099 mongodb
-npm start -- search mongodb 2
-npm start -- remove 978-00-0099
-npm start -- get 978-00-0099
-npm start -- remove 978-00-0099 confirm
-npm start -- get 978-00-0099
-npm start -- list
+```powershell
+npm.cmd start -- seed
+npm.cmd start -- list
+npm.cmd start -- search database 3
+npm.cmd start -- add 978-00-0099 "CRUD 응용" "학생 저자" 4 "database,practice"
+npm.cmd start -- get 978-00-0099
+npm.cmd start -- update-stock 978-00-0099 7
+npm.cmd start -- add-category 978-00-0099 mongodb
+npm.cmd start -- add-category 978-00-0099 mongodb
+npm.cmd start -- search mongodb 2
+npm.cmd start -- remove 978-00-0099
+npm.cmd start -- get 978-00-0099
+npm.cmd start -- remove 978-00-0099 confirm
+npm.cmd start -- get 978-00-0099
+npm.cmd start -- list
 ```
 
 두 번째 add-category 뒤 categories에 mongodb가 하나만 있는지 확인합니다. 현재 updatedAt 동시 update 때문에 modified 건수만으로 `$addToSet` 중복 방지를 판단하지 않습니다.
@@ -709,11 +709,11 @@ npm start -- list
 
 다음 중 하나의 interface와 안전 흐름을 설계합니다.
 
-```bash
-npm start -- increment-stock <isbn> <amount>
-npm start -- remove-category <isbn> <category>
-npm start -- soft-remove <isbn> confirm
-npm start -- restore <isbn>
+```powershell
+npm.cmd start -- increment-stock <isbn> <amount>
+npm.cmd start -- remove-category <isbn> <category>
+npm.cmd start -- soft-remove <isbn> confirm
+npm.cmd start -- restore <isbn>
 ```
 
 필수 항목:
