@@ -7,15 +7,15 @@ function showHelp() {
 MongoDB CRUD 기초
 
 사용법:
-  npm start -- seed
-  npm start -- list [category]
-  npm start -- get <isbn>
-  npm start -- add <isbn> <title> <author> <stock> [categories]
+  npm.cmd start -- seed
+  npm.cmd start -- list [category]
+  npm.cmd start -- get <isbn>
+  npm.cmd start -- add <isbn> <title> <author> <stock> [categories]
 
 예시:
-  npm start -- list database
-  npm start -- get 978-00-0001
-  npm start -- add 978-00-0099 "새 도서" "학생 저자" 3 "database,mongodb"
+  npm.cmd start -- list database
+  npm.cmd start -- get 978-00-0001
+  npm.cmd start -- add 978-00-0099 "새 도서" "학생 저자" 3 "database,mongodb"
 `)
 }
 
