@@ -50,15 +50,15 @@
 
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
-```bash
+```powershell
 git switch step-2
 git branch --show-current
 git status
-npm run check
-npm start
+npm.cmd run check
+npm.cmd start
 ```
 
-오늘 파일은 `data/library-step-2.sqlite`입니다. `step-1` 파일과 다른 전용 파일이므로 두 단계 결과를 혼동하지 않습니다. `npm start`를 실행할 때마다 오늘 파일만 다시 만듭니다.
+오늘 파일은 `data/library-step-2.sqlite`입니다. `step-1` 파일과 다른 전용 파일이므로 두 단계 결과를 혼동하지 않습니다. `npm.cmd start`를 실행할 때마다 오늘 파일만 다시 만듭니다.
 
 ## 4. 360분 시간표
 
@@ -1028,7 +1028,7 @@ SELECT * FROM books WHERE id = ?;
 시간이 부족해도 다음 다섯 활동은 완료합니다.
 
 1. 네 테이블 ERD와 PK/FK 표시
-2. 기준 `npm start` 실행
+2. 기준 `npm.cmd start` 실행
 3. 없는 author ID FOREIGN KEY 실패
 4. books-authors INNER JOIN
 5. 도서 없는 저자를 포함하는 LEFT JOIN
