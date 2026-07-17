@@ -41,7 +41,7 @@
 
 다음 결과물을 남깁니다.
 
-- `npm start` 기준 실행 결과
+- `npm.cmd start` 기준 실행 결과
 - `members` 스키마를 자신의 말로 설명한 표
 - 정상 INSERT 1회와 `UNIQUE` 실패 1회의 관찰 기록
 - `phone` 또는 `membership_level`을 추가한 확장 스키마
@@ -54,7 +54,7 @@
 
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
-```bash
+```powershell
 git switch step-1
 git branch --show-current
 git status
@@ -64,15 +64,15 @@ git status
 
 ### 3.2 실행 환경
 
-```bash
+```powershell
 node --version
-npm run check
-npm start
+npm.cmd run check
+npm.cmd start
 ```
 
 - Node.js는 22.13 이상이어야 합니다.
-- `npm run check`는 JavaScript 문법을 확인합니다.
-- `npm start`는 현재 단계 전용 `data/library-step-1.sqlite`를 다시 만듭니다.
+- `npm.cmd run check`는 JavaScript 문법을 확인합니다.
+- `npm.cmd start`는 현재 단계 전용 `data/library-step-1.sqlite`를 다시 만듭니다.
 
 ### 3.3 파일 안전 범위
 
@@ -123,7 +123,7 @@ data/library-step-1.sqlite
 
 ```text
 학습자
-  ↓ npm start
+  ↓ npm.cmd start
 Node.js index.js
   ↓ SQL
 SQLite DBMS library
@@ -364,11 +364,11 @@ database.exec("PRAGMA foreign_keys = ON")
 
 ## 3-5. 실행 전후 파일 관찰 — 10분
 
-```bash
-rm data/library-step-1.sqlite
-ls -l data
-npm start
-ls -l data/library-step-1.sqlite
+```powershell
+Remove-Item data/library-step-1.sqlite -Force -ErrorAction SilentlyContinue
+Get-ChildItem data
+npm.cmd start
+Get-Item data/library-step-1.sqlite
 ```
 
 PowerShell에서는 다음 명령을 사용합니다.
@@ -380,7 +380,7 @@ npm.cmd start
 Get-Item data/library-step-1.sqlite
 ```
 
-첫 `rm`은 현재 단계 전용 파일에만 사용합니다. 파일이 없다는 메시지가 나와도 괜찮습니다. `npm start` 뒤 SQLite 파일이 다시 생기는지 확인합니다.
+첫 `rm`은 현재 단계 전용 파일에만 사용합니다. 파일이 없다는 메시지가 나와도 괜찮습니다. `npm.cmd start` 뒤 SQLite 파일이 다시 생기는지 확인합니다.
 
 ### 예상
 
@@ -392,7 +392,7 @@ Get-Item data/library-step-1.sqlite
 
 짝에게 다음 문장을 완성해 설명합니다.
 
-> `npm start`를 실행하면 먼저 ______를 준비하고 현재 단계 파일을 ______한다. 그다음 `DatabaseSync`로 ______하고, SQL로 ______와 ______를 만든다. 마지막에는 ______와 ______를 조회해 검증하고 연결을 닫는다.
+> `npm.cmd start`를 실행하면 먼저 ______를 준비하고 현재 단계 파일을 ______한다. 그다음 `DatabaseSync`로 ______하고, SQL로 ______와 ______를 만든다. 마지막에는 ______와 ______를 조회해 검증하고 연결을 닫는다.
 
 ### 3교시 체크포인트
 
@@ -617,8 +617,8 @@ member id=3 생성
 - SELECT 결과: 4행
 - joined_at: 직접 전달하지 않아도 존재
 
-```bash
-npm start
+```powershell
+npm.cmd start
 ```
 
 예상과 실제를 기록합니다.
@@ -771,9 +771,9 @@ is_active INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0, 1))
 
 수업 중 임시 실패 코드가 남아 있다면 제거합니다. 개인 확장은 별도 메모나 커밋으로 보관하고 기준 실행이 성공하는지 확인합니다.
 
-```bash
-npm run check
-npm start
+```powershell
+npm.cmd run check
+npm.cmd start
 ```
 
 ## 6-6. 출구 티켓 — 5분
@@ -927,9 +927,9 @@ name TEXT NOT NULL CHECK (length(trim(name)) > 0)
 
 ## `node:sqlite`를 찾을 수 없습니다
 
-```bash
+```powershell
 node --version
-which node
+(Get-Command node).Source
 ```
 
 PowerShell에서는 다음 명령을 사용합니다.
@@ -1034,7 +1034,7 @@ Node.js 22.13 이상인지 확인합니다. IDE 터미널과 일반 터미널이
 
 시간이 부족하거나 환경 오류가 있었더라도 다음 네 가지는 반드시 완료합니다.
 
-1. 기준 `npm start` 성공
+1. 기준 `npm.cmd start` 성공
 2. `members` 스키마 표 작성
 3. 새 회원 한 명 INSERT와 사후 SELECT
 4. 중복 email 오류 관찰과 설명

@@ -8,7 +8,7 @@
 
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
-```bash
+```powershell
 git status
 git branch --show-current
 git log --oneline --decorate -3
@@ -20,17 +20,17 @@ git log --oneline --decorate -3
 
 1~3일차에는 다음을 확인합니다.
 
-```bash
+```powershell
 node --version
-npm start
+npm.cmd start
 ```
 
 4~8일차에는 MongoDB 서버 또는 Atlas, `.env`, 안전한 데이터베이스 이름을 추가로 확인합니다.
 
-```bash
-cp .env.example .env
-npm ci
-npm start
+```powershell
+Copy-Item .env.example .env
+npm.cmd ci
+npm.cmd start
 ```
 
 PowerShell에서는 `.env`를 다음과 같이 준비합니다.
@@ -153,7 +153,7 @@ RDBMS와 MongoDB 중 무엇이 더 좋다는 결론을 요구하지 않습니다
 
 ### 일부 학습자의 데이터 상태가 다릅니다
 
-SQLite 단계는 `npm start`가 현재 단계 전용 파일을 다시 만듭니다. MongoDB CRUD 단계는 `npm start -- seed`로 기준 상태를 복원합니다. 단, seed 전에 개인 실습 데이터가 사라진다는 점을 알립니다.
+SQLite 단계는 `npm.cmd start`가 현재 단계 전용 파일을 다시 만듭니다. MongoDB CRUD 단계는 `npm.cmd start -- seed`로 기준 상태를 복원합니다. 단, seed 전에 개인 실습 데이터가 사라진다는 점을 알립니다.
 
 ### 복사한 명령의 따옴표가 다릅니다
 
