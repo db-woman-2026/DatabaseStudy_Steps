@@ -51,17 +51,16 @@
 - 설명을 줄인 뒤에도 실행 순서, 예상 결과, 오류 조건이 남아 있는지 확인합니다.
 - 코드 블록과 diff가 원본 코드와 같은지 확인합니다.
 
-## Windows 11 병기
+## Windows 11 전용 문서
 
-- 강의의 Windows 기준 터미널은 Windows Terminal의 PowerShell입니다. WSL이나 Git Bash만 제시하지 않습니다.
-- `git`, `node`, `npm`처럼 PowerShell에서도 같은 명령은 문서 앞에서 한 번만 안내합니다.
-- `cp`, `rm`, `cat`, `ls`, `grep`, `which`, `pwd`, `curl`처럼 문법이 다른 명령에는 바로 이어지는 `powershell` 코드 블록을 둡니다.
-- PowerShell에서는 `Copy-Item`, `Remove-Item`, `Get-Content`, `Get-ChildItem`, `Select-String`, `Get-Command`, `Get-Location`, `Invoke-RestMethod`를 사용합니다.
-- 설치 안내는 공식 문서 링크와 이 저장소의 최소 버전을 함께 적습니다. 특정 설치 프로그램의 화면이나 최신 버전 번호를 고정해 쓰지 않습니다.
-- 경로 예시는 `C:\workspace\...`를 사용하고, 공백 경로의 따옴표, `.env` 복사, UTF-8, CRLF/LF, 방화벽 안내를 확인합니다.
-- `npm.ps1` 실행 정책 오류가 나면 먼저 `npm.cmd`와 `npx.cmd`를 안내합니다. 실행 정책 변경을 필수 절차로 두지 않습니다.
-- Windows 전용 MongoDB는 공식 MSI 설치와 서비스 실행을 기준으로 설명합니다. Windows의 WSL 안에 MongoDB Community Server를 설치하도록 안내하지 않습니다.
-- 새 셸 블록을 추가한 뒤 `/docs` 전체에서 운영체제 의존 명령을 다시 검색합니다.
+- 모든 설치와 실습은 Windows 11 x64, Windows Terminal의 PowerShell을 기준으로 설명합니다.
+- 다른 운영체제나 다른 셸의 설치법과 명령 비교표를 넣지 않습니다.
+- 명령은 `git`, `node`, `npm.cmd`와 PowerShell cmdlet 형식으로 적습니다.
+- 신규 PC를 기준으로 Windows Terminal, Node.js LTS, Git for Windows, VS Code, MongoDB Community Server와 mongosh 설치 명령을 빠뜨리지 않습니다.
+- 경로 예시는 `$HOME\dongbu\DatabaseStudy_Steps`를 사용하고 공백 경로, `.env` 복사, UTF-8, 줄바꿈, 방화벽 안내를 확인합니다.
+- `npm.ps1` 실행 정책 오류는 `npm.cmd`와 `npx.cmd`로 우회하고 실행 정책 변경을 필수 절차로 두지 않습니다.
+- MongoDB는 Windows 서비스와 `database_study_` 접두사의 전용 실습 DB만 사용합니다.
+- 새 명령 블록은 `powershell`로 표시하고 `/docs` 전체에서 Windows와 맞지 않는 명령을 다시 검색합니다.
 
 ## 강의 품질 기준
 

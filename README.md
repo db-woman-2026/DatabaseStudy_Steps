@@ -26,7 +26,7 @@ main -> step-1 -> step-2 -> step-3 -> step-4 -> step-5 -> step-6 -> step-7 -> st
 
 특정 단계의 수정은 가장 이른 affected step에서 커밋하고 뒤 단계로 한 브랜치씩 병합합니다.
 
-```bash
+```powershell
 git merge-base --is-ancestor step-N step-(N+1)
 ```
 
@@ -53,14 +53,14 @@ git merge-base --is-ancestor step-N step-(N+1)
 2. 학습할 브랜치로 이동합니다.
 3. `docs/lecture/step-N.md`의 360분 시간표와 완료 기준을 먼저 확인합니다.
 4. 각 실습의 결과를 실행 전에 예측합니다.
-5. `npm start`로 현재 단계의 기준 예제를 실행합니다.
+5. `npm.cmd start`로 현재 단계의 기준 예제를 실행합니다.
 6. 처리 건수와 저장된 데이터를 다시 조회해 예상과 비교합니다.
 7. 안내 실습과 독립 실습에서 조건·값·도메인을 바꿔 반복합니다.
 8. 출구 티켓과 완료 기준을 확인한 뒤 다음 브랜치로 이동합니다.
 
-```bash
+```powershell
 git switch step-1
-npm start
+npm.cmd start
 ```
 
 ## 실행 환경
@@ -73,10 +73,10 @@ RDBMS 단계는 별도 데이터베이스 설치 없이 실행됩니다. SQLite 
 
 MongoDB 단계에서는 환경 변수 예시를 복사합니다.
 
-```bash
-cp .env.example .env
-npm ci
-npm start
+```powershell
+Copy-Item .env.example .env
+npm.cmd ci
+npm.cmd start
 ```
 
 Windows 11 PowerShell에서는 [환경 준비](./docs/windows-11.md)를 먼저 확인하고 다음 명령을 사용합니다.
