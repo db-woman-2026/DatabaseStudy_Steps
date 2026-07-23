@@ -1,6 +1,6 @@
 # Windows 11 x64 실습 환경 준비
 
-이 강의는 Windows 11 x64와 Windows Terminal의 `Windows PowerShell` 프로필을 기준으로 진행합니다. 수업 PC에 프로그램이 이미 보여도 아래 설치 명령을 모두 실행해 설치 상태와 최신 안정판 여부를 확인합니다.
+아래 명령은 Windows 11 x64와 Windows Terminal의 `Windows PowerShell` 프로필에서 실행합니다. 프로그램이 이미 설치되어 있어도 설치 명령으로 현재 상태와 최신 안정판 여부를 확인합니다.
 
 ## 1. Windows Terminal 설치
 
@@ -58,25 +58,106 @@ mongosh --version
 
 > !@#windows11 test: [Windows 11 x64 초기화 PC에서 Windows Terminal, Node.js LTS x64, Git for Windows x64, VS Code x64, MongoDB Community Server x64, mongosh x64를 위 winget 명령으로 신규 설치하고 전체 단계 검증을 반복합니다.]@#
 
-## 3. 개인 실습 저장소 준비
+## 3. Git과 GitHub 계정 연결
+
+예시 이름과 이메일을 자신의 값으로 바꿉니다.
 
 ```powershell
-gh auth login --hostname github.com --web
 git config --global user.name "Student Name"
 git config --global user.email "student@example.com"
-New-Item -ItemType Directory -Path "$HOME\dongbu" -Force | Out-Null
-Set-Location "$HOME\dongbu"
-git clone --branch main --single-branch https://github.com/db-woman-2026/DatabaseStudy_Steps.git
-Set-Location "$HOME\dongbu\DatabaseStudy_Steps"
-git remote remove origin
-gh repo create database-study-practice --private --source . --remote origin --push
-git branch --show-current
-git status --short --branch
+git config --global --get user.name
+git config --global --get user.email
+gh auth login --hostname github.com --web
+gh auth status --hostname github.com
 ```
 
-현재 branch는 `main`이어야 합니다. 같은 저장소 이름이 이미 있으면 다른 이름의 빈 GitHub 저장소를 만든 뒤 `origin`으로 연결합니다. OneDrive가 관리하는 폴더는 사용하지 않습니다.
+## 4. 개인 Node.js 프로젝트 만들기
 
-## 4. MongoDB Windows 서비스 확인
+이 저장소를 clone하지 않고 빈 `database-study` 폴더를 만듭니다.
+
+```powershell
+New-Item -ItemType Directory -Path "$HOME\dongbu\database-study" -Force | Out-Null
+Set-Location "$HOME\dongbu\database-study"
+git init -b main
+npm.cmd init -y
+npm.cmd pkg set "name=database-study" "description=SQLite and MongoDB beginner practice" "main=index.js" "engines.node=>=22.13.0" "scripts.start=node index.js" "scripts.check=node --check index.js"
+npm.cmd install
+New-Item -ItemType File -Path index.js, .gitignore, .gitattributes, .env.example -Force | Out-Null
+code .
+```
+
+VS Code에서 아래 파일 전체를 입력합니다. `package.json`과 `package-lock.json`은 npm 명령이 만들었으므로 직접 입력하지 않습니다.
+
+### `index.js`
+
+```js
+console.log("Database study project is ready.");
+```
+
+### `.gitignore`
+
+```text
+node_modules/
+.env
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
+npm-debug.log*
+.DS_Store
+```
+
+### `.gitattributes`
+
+```text
+* text=auto
+
+*.js text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.sql text eol=lf
+*.env.example text eol=lf
+
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+```
+
+### `.env.example`
+
+```text
+MONGODB_URI=mongodb://127.0.0.1:27017
+MONGODB_DB=database_study_course
+```
+
+검사와 첫 실행을 확인합니다.
+
+```powershell
+npm.cmd run check
+npm.cmd start
+```
+
+두 명령이 오류 없이 끝나고 `Database study project is ready.`가 출력되어야 합니다.
+
+## 5. 첫 commit과 GitHub 저장소 만들기
+
+```powershell
+Set-Location "$HOME\dongbu\database-study"
+git add .
+git commit -m "Create database study project"
+gh repo create database-study --private --source . --remote origin --push
+git branch --show-current
+git status --short --branch
+git remote -v
+```
+
+현재 branch는 `main`이어야 합니다. 작업 파일 목록은 비어 있어야 하며 `origin`에는 본인 GitHub 계정의 저장소 주소가 표시되어야 합니다.
+
+같은 저장소 이름이 이미 있으면 `gh repo create`의 이름을 `database-study-이름`처럼 바꿉니다. 로컬 폴더 이름은 그대로 사용해도 됩니다. OneDrive가 관리하는 폴더는 사용하지 않습니다.
+
+## 6. MongoDB Windows 서비스 확인
 
 MongoDB Community Server는 `MongoDB`라는 Windows 서비스로 설치됩니다.
 
@@ -90,39 +171,38 @@ mongosh "mongodb://127.0.0.1:27017" --eval 'db.runCommand({ ping: 1 })'
 
 MongoDB 실습은 `MONGODB_DB` 값이 `database_study_`로 시작하는 전용 데이터베이스만 사용합니다. 개인 또는 업무용 데이터베이스 연결 문자열을 넣지 않습니다.
 
-## 5. SQLite 단계 실행
+## 7. SQLite 단계 실행
 
 저장소 루트에서 `main`과 변경 상태를 먼저 확인합니다.
 
 ```powershell
-Set-Location "$HOME\dongbu\DatabaseStudy_Steps"
+Set-Location "$HOME\dongbu\database-study"
 git branch --show-current
 git status --short
-npm.cmd ci
 npm.cmd run check
 npm.cmd start
 ```
 
-`git status --short`는 실행 전 아무것도 출력하지 않아야 합니다. 1일차부터 3일차까지는 실행할 때 현재 단계 전용 SQLite 파일을 다시 만듭니다.
+`git status --short`는 실행 전 아무것도 출력하지 않아야 합니다. 문서의 `index.js`를 입력한 뒤 실행합니다. SQLite 예제는 각각의 전용 파일을 다시 만듭니다.
 
-## 6. MongoDB 단계 실행
+## 8. MongoDB 단계 실행
 
-4일차부터 환경 파일과 로컬 MongoDB가 필요합니다.
+Step 4부터 환경 파일과 로컬 MongoDB가 필요합니다.
 
 ```powershell
-Set-Location "$HOME\dongbu\DatabaseStudy_Steps"
+Set-Location "$HOME\dongbu\database-study"
 git branch --show-current
 git status --short
 Copy-Item -LiteralPath .env.example -Destination .env
 Get-Content -LiteralPath .env -Encoding utf8
-npm.cmd ci
+npm.cmd install
 npm.cmd run check
 npm.cmd start
 ```
 
 `.env`의 기본값은 로컬 MongoDB와 `database_study_course`를 가리킵니다. 비밀번호가 포함된 연결 문자열은 화면 공유, 문서, commit에 넣지 않습니다.
 
-6일차부터는 도움말에 표시된 CRUD 명령을 실행합니다.
+Step 6부터는 도움말에 표시된 CRUD 명령을 실행합니다.
 
 ```powershell
 npm.cmd start -- seed
@@ -133,20 +213,20 @@ npm.cmd start -- add 978-00-0099 "새 도서" "학생 저자" 3 "database,mongod
 
 `--` 뒤의 값은 Node.js 프로그램으로 전달됩니다. PowerShell에서 공백이 포함된 인자는 큰따옴표로 묶습니다.
 
-## 7. 테스트와 VS Code
+## 9. 테스트와 VS Code
 
 ```powershell
-Set-Location "$HOME\dongbu\DatabaseStudy_Steps"
+Set-Location "$HOME\dongbu\database-study"
 npm.cmd run check
 npm.cmd test
 code .
 ```
 
-일부 일차에는 `test` script가 없습니다. 해당 단계에서는 문서에 제시된 `npm.cmd run check`와 `npm.cmd start`를 실행하고, `step-6`부터 `npm.cmd test`를 추가합니다.
+현재 `package.json`에 `test` script가 없으면 `npm.cmd run check`와 `npm.cmd start`를 실행합니다. `test` script가 있으면 `npm.cmd test`도 실행합니다.
 
 VS Code 오른쪽 아래에서 인코딩이 `UTF-8`인지 확인합니다. 저장소의 `.gitattributes`가 소스와 문서의 줄바꿈을 관리하므로 전체 파일의 줄바꿈을 한꺼번에 바꾸지 않습니다.
 
-## 8. PowerShell 경로와 파일 명령
+## 10. PowerShell 경로와 파일 명령
 
 ```powershell
 Get-Location
