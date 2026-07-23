@@ -55,7 +55,7 @@
 
 ## 3. 시작 전 준비
 
-> Windows 11에서는 [환경 준비](../windows-11.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Windows 11 x64 실습 환경 준비」 · 절 「1. Windows Terminal 설치」)</span>를 먼저 확인합니다. 명령은 이 교재의 PowerShell 코드 블록에 적힌 `git`, `node`, `npm.cmd` 형태를 그대로 사용합니다.
+> Windows 11에서는 [환경 준비](../windows-11.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Windows 11 x64 실습 환경 준비」 · 절 「1. Windows Terminal 설치」)</span>를 먼저 확인합니다. 명령은 이 교재의 PowerShell 코드 블록에 적힌 `git`, `node`, `npm` 형태를 그대로 사용합니다.
 
 ```powershell
 git branch --show-current
@@ -87,22 +87,22 @@ function showHelp() {
 MongoDB CRUD 응용
 
 기준 데이터:
-  npm.cmd start -- seed
+  npm start -- seed
 
 생성·조회:
-  npm.cmd start -- list [category]
-  npm.cmd start -- get <isbn>
-  npm.cmd start -- add <isbn> <title> <author> <stock> [categories]
+  npm start -- list [category]
+  npm start -- get <isbn>
+  npm start -- add <isbn> <title> <author> <stock> [categories]
 
 조건 검색·수정·삭제:
-  npm.cmd start -- search <keyword> [minStock]
-  npm.cmd start -- update-stock <isbn> <stock>
-  npm.cmd start -- add-category <isbn> <category>
-  npm.cmd start -- add-review <isbn> <reviewer> <score> <comment>
-  npm.cmd start -- remove <isbn> confirm
+  npm start -- search <keyword> [minStock]
+  npm start -- update-stock <isbn> <stock>
+  npm start -- add-category <isbn> <category>
+  npm start -- add-review <isbn> <reviewer> <score> <comment>
+  npm start -- remove <isbn> confirm
 
 종합 조회:
-  npm.cmd start -- stats
+  npm start -- stats
 `)
 }
 
@@ -547,8 +547,8 @@ test("createReviewDocument는 리뷰 입력을 중첩 문서로 바꾼다", () =
 ### 입력 후 검사
 
 ```powershell
-npm.cmd run check
-npm.cmd test
+npm run check
+npm test
 ```
 
 MongoDB 실행에서 연결 오류가 나면 코드부터 바꾸지 않고 Windows 서비스와 `.env` 값을 먼저 확인합니다.
@@ -557,12 +557,12 @@ MongoDB 실행에서 연결 오류가 나면 코드부터 바꾸지 않고 Windo
 기준 상태:
 
 ```powershell
-npm.cmd run check
-npm.cmd test
-npm.cmd start -- help
-npm.cmd start -- seed
-npm.cmd start -- list
-npm.cmd start -- stats
+npm run check
+npm test
+npm start -- help
+npm start -- seed
+npm start -- list
+npm start -- stats
 ```
 
 MongoDB 서버와 전용 `.env`가 필요합니다. `seed`는 `books_course`를 3건으로 초기화하므로 이전 실습 산출물을 먼저 기록합니다.
@@ -570,7 +570,7 @@ MongoDB 서버와 전용 `.env`가 필요합니다. `seed`는 `books_course`를 
 # 1. review subdocument Create/Update
 ## 1-1. 명령과 argv
 ```powershell
-npm.cmd start -- add-review 978-00-0001 민지 5 "실습 흐름이 이해하기 쉬웠어요."
+npm start -- add-review 978-00-0001 민지 5 "실습 흐름이 이해하기 쉬웠어요."
 ```
 
 명령 map 전달:
@@ -664,7 +664,7 @@ const result = await books.updateOne(
 실행 전:
 
 ```powershell
-npm.cmd start -- get 978-00-0001
+npm start -- get 978-00-0001
 ```
 
 기준 reviews 길이는 0입니다. add-review 후:
@@ -1021,19 +1021,19 @@ STUDENT book을 add하면 새 group이 생깁니다. publisher name이 필요하
 
 ## 5-2. 기준 명령
 ```powershell
-npm.cmd start -- seed
-npm.cmd start -- list
-npm.cmd start -- add 978-00-0099 "실전 MongoDB" "학생 저자" 4 "database,mongodb"
-npm.cmd start -- get 978-00-0099
-npm.cmd start -- update-stock 978-00-0099 7
-npm.cmd start -- add-category 978-00-0099 practice
-npm.cmd start -- add-review 978-00-0099 민지 5 "CRUD를 반복해서 익혔어요."
-npm.cmd start -- search mongodb 2
-npm.cmd start -- stats
-npm.cmd start -- remove 978-00-0099
-npm.cmd start -- remove 978-00-0099 confirm
-npm.cmd start -- get 978-00-0099
-npm.cmd start -- list
+npm start -- seed
+npm start -- list
+npm start -- add 978-00-0099 "실전 MongoDB" "학생 저자" 4 "database,mongodb"
+npm start -- get 978-00-0099
+npm start -- update-stock 978-00-0099 7
+npm start -- add-category 978-00-0099 practice
+npm start -- add-review 978-00-0099 민지 5 "CRUD를 반복해서 익혔어요."
+npm start -- search mongodb 2
+npm start -- stats
+npm start -- remove 978-00-0099
+npm start -- remove 978-00-0099 confirm
+npm start -- get 978-00-0099
+npm start -- list
 ```
 
 confirm 없는 remove를 먼저 실행해 state가 유지됨을 확인합니다.
@@ -1492,7 +1492,7 @@ book에는 review 건수/average cache를 둘 수 있으나 source와 일관성 
 
 ## review score 오류
 
-score는 1~5 정수입니다. shell 문자열을 Number로 바꾼 뒤 정수와 범위를 모두 검사합니다. `npm.cmd test`로 DB 연결 없이 재현합니다.
+score는 1~5 정수입니다. shell 문자열을 Number로 바꾼 뒤 정수와 범위를 모두 검사합니다. `npm test`로 DB 연결 없이 재현합니다.
 
 ## review comment가 잘립니다
 
@@ -1595,12 +1595,12 @@ state ledger로 첫 차이가 난 명령부터 찾습니다.
 
 # 저장소에 기록하기
 
-실험용 데이터를 정리하고 `npm.cmd run check`를 통과시킨 뒤 현재 단계의 코드와 기록을 저장합니다.
+실험용 데이터를 정리하고 `npm run check`를 통과시킨 뒤 현재 단계의 코드와 기록을 저장합니다.
 
 ```powershell
 git branch --show-current
 git status --short
-npm.cmd run check
+npm run check
 git add .
 git commit -m "Complete database step 8"
 git push
