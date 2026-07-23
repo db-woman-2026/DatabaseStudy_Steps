@@ -1,6 +1,6 @@
 # Step 5. MongoDB 데이터 모델링과 인덱스
 
-4일차에는 중첩 문서를 저장하고 조회했습니다. 5일차에는 조회 방식, 변경 빈도, 공유 범위, 배열 크기를 기준으로 포함과 참조를 선택합니다. 이어서 고유 제약과 반복 조회에 필요한 인덱스를 설계합니다.
+Step 4에는 중첩 문서를 저장하고 조회했습니다. Step 5에는 조회 방식, 변경 빈도, 공유 범위, 배열 크기를 기준으로 포함과 참조를 선택합니다. 이어서 고유 제약과 반복 조회에 필요한 인덱스를 설계합니다.
 
 ## 0. 먼저 생각할 질문
 
@@ -12,7 +12,7 @@
 6. 모든 필드에 index를 만들면 안 되는 이유는 무엇인가?
 7. 필터·정렬·프로젝션을 실제 접근 패턴으로 묶어 index를 어떻게 제안하는가?
 
-## 1. 수업 목표
+## 1. 완료 목표
 
 ### 개념
 
@@ -40,7 +40,7 @@
 - 참조가 있다는 이유로 존재·삭제 무결성이 자동 보장된다고 가정하지 않습니다.
 - 배열이 편리하다는 이유로 무한 성장 데이터를 한 문서에 넣지 않습니다.
 
-## 2. 수업 결과물
+## 2. 완료 결과
 
 - 도서 서비스 접근 패턴 목록 8개 이상
 - `author`, `publisher`, `categories`, `inventory`, `reviews` 모델링 결정표
@@ -48,7 +48,7 @@
 - 실제 index 목록과 각 index의 목적·비용 표
 - unique 위반, missing reference, 배열 성장 실패 시나리오 기록
 - 쇼핑몰·게시판·예약 중 하나의 문서 모델 review
-- 5일차 형성평가와 설계 의사결정서
+- 이해 점검 답안과 설계 의사결정서
 
 ## 3. 시작 전 준비
 
@@ -57,34 +57,186 @@
 ```powershell
 git branch --show-current
 git status
-npm.cmd ci
-npm.cmd run check
-npm.cmd start
 ```
 
-MongoDB 서버가 실행 중이고 `.env`가 강의 전용 데이터베이스를 가리켜야 합니다. 오늘 코드는 다음 두 컬렉션만 초기화합니다.
+MongoDB 서버가 실행 중이고 `.env`가 전용 데이터베이스를 가리켜야 합니다. 아래에서 소스 파일 전체를 입력한 뒤 실행합니다. 현재 단계 코드는 다음 두 컬렉션만 초기화합니다.
 
 - `books_step5`
 - `publishers_step5`
 
-## 4. 360분 시간표
+## 4. 소스 파일 전체 입력
 
-| 시간 | 블록 | 내용 | 필수 결과 |
-| --- | --- | --- | --- |
-| 00:00~01:00 | 1교시 | 접근 패턴과 모델링 질문 | 읽기·쓰기 패턴 목록 |
-| 01:00~02:00 | 2교시 | embedding vs reference | 필드별 결정표 |
-| 02:00~03:00 | 3교시 | 배열 성장, 중복, 일관성, 참조 무결성 | 실패 시나리오와 대안 |
-| 03:00~04:00 | 4교시 | index 원리, unique, multikey, 비용 | index 목적표와 오류 실험 |
-| 04:00~05:00 | 5교시 | 필터·프로젝션·정렬, compound index | 쿼리-index 매핑 |
-| 05:00~06:00 | 6교시 | publisher 참조 조회와 모델 리뷰 | 도메인 설계 발표·평가 |
+개인 저장소의 기존 파일을 아래 전체 내용으로 바꿉니다. 이 저장소의 `step-N` 기준 브랜치로 이동하지 않습니다.
 
----
+### `index.js`
 
-# 1교시. 접근 패턴에서 모델 시작하기 — 60분
+`index.js`를 열고 파일 전체를 다음 내용으로 맞춥니다.
 
-## 1-1. 4일차 회수 — 10분
+~~~js
+const { sampleBooks } = require("./lib/sampleBooks")
+const { withDatabase } = require("./lib/mongodb")
 
-4일차 문서의 장점과 질문을 다시 적습니다.
+const samplePublishers = [
+  {
+    code: "DATA-LAB",
+    name: "데이터 연구소",
+    website: "https://example.com/data-lab",
+  },
+  {
+    code: "WEB-BOOKS",
+    name: "웹북스",
+    website: "https://example.com/web-books",
+  },
+]
+
+async function main() {
+  await withDatabase(async (database, databaseName) => {
+    const books = database.collection("books_step5")
+    const publishers = database.collection("publishers_step5")
+
+    await books.deleteMany({})
+    await publishers.deleteMany({})
+
+    await publishers.createIndex({ code: 1 }, { unique: true })
+    await books.createIndex({ isbn: 1 }, { unique: true })
+    await books.createIndex({ categories: 1 })
+    await books.createIndex({ "inventory.stock": 1 })
+
+    await publishers.insertMany(samplePublishers)
+    await books.insertMany(sampleBooks)
+
+    console.log(`database: ${databaseName}`)
+    console.log("books_step5 인덱스")
+    console.table(
+      (await books.indexes()).map((index) => ({
+        name: index.name,
+        key: JSON.stringify(index.key),
+        unique: index.unique ?? false,
+      })),
+    )
+
+    const databaseBooks = await books
+      .find(
+        { categories: "database" },
+        {
+          projection: {
+            _id: 0,
+            title: 1,
+            "author.name": 1,
+            publisherCode: 1,
+            "inventory.stock": 1,
+          },
+        },
+      )
+      .sort({ publishedYear: -1 })
+      .toArray()
+
+    console.log("database 카테고리 도서")
+    console.log(JSON.stringify(databaseBooks, null, 2))
+
+    const publisher = await publishers.findOne(
+      { code: databaseBooks[0].publisherCode },
+      { projection: { _id: 0 } },
+    )
+
+    console.log("publisherCode로 참조한 출판사")
+    console.log(publisher)
+  })
+}
+
+main().catch((error) => {
+  console.error("MongoDB 실습 실행 실패")
+  console.error(error.message)
+  console.error("MongoDB 서버와 .env의 MONGODB_URI를 확인하세요.")
+  process.exitCode = 1
+})
+~~~
+
+### `lib/sampleBooks.js`
+
+`lib/sampleBooks.js`를 열고 파일 전체를 다음 내용으로 맞춥니다.
+
+~~~js
+const sampleBooks = [
+  {
+    isbn: "978-00-0001",
+    title: "데이터를 배우는 시간",
+    author: {
+      name: "김데이터",
+      country: "KR",
+    },
+    categories: ["database", "beginner"],
+    publisherCode: "DATA-LAB",
+    inventory: {
+      stock: 3,
+      location: "A-01",
+    },
+    publishedYear: 2025,
+    reviews: [],
+    courseSeed: true,
+    createdAt: new Date("2026-07-01T00:00:00.000Z"),
+  },
+  {
+    isbn: "978-00-0002",
+    title: "MongoDB 첫걸음",
+    author: {
+      name: "박문서",
+      country: "KR",
+    },
+    categories: ["database", "mongodb"],
+    publisherCode: "DATA-LAB",
+    inventory: {
+      stock: 5,
+      location: "A-02",
+    },
+    publishedYear: 2026,
+    reviews: [
+      {
+        reviewer: "민지",
+        score: 5,
+        comment: "문서 구조를 이해하기 쉬웠어요.",
+      },
+    ],
+    courseSeed: true,
+    createdAt: new Date("2026-07-02T00:00:00.000Z"),
+  },
+  {
+    isbn: "978-00-0003",
+    title: "Node.js 실습 노트",
+    author: {
+      name: "이노드",
+      country: "KR",
+    },
+    categories: ["nodejs", "beginner"],
+    publisherCode: "WEB-BOOKS",
+    inventory: {
+      stock: 1,
+      location: "B-01",
+    },
+    publishedYear: 2024,
+    reviews: [],
+    courseSeed: true,
+    createdAt: new Date("2026-07-03T00:00:00.000Z"),
+  },
+]
+
+module.exports = {
+  sampleBooks,
+}
+~~~
+
+### 입력 후 검사
+
+```powershell
+npm.cmd run check
+npm.cmd start
+```
+
+MongoDB 실행에서 연결 오류가 나면 코드부터 바꾸지 않고 Windows 서비스와 `.env` 값을 먼저 확인합니다.
+
+# 1. 접근 패턴에서 모델 시작하기
+## 1-1. 기준 MongoDB 문서 확인
+Step 4 문서의 장점과 질문을 다시 적습니다.
 
 ```js
 {
@@ -100,8 +252,7 @@ MongoDB 서버가 실행 중이고 `.env`가 강의 전용 데이터베이스를
 - 질문: reviews가 계속 늘 때 문서 크기
 - 질문: publisher 같은 공유 데이터를 어디에 둘지
 
-## 1-2. 스키마보다 먼저 질문을 적는다 — 15분
-
+## 1-2. 스키마보다 먼저 질문을 적는다
 다음 기능 목록을 읽기와 쓰기로 나눕니다.
 
 ### 읽기 패턴
@@ -125,8 +276,7 @@ MongoDB 서버가 실행 중이고 `.env`가 강의 전용 데이터베이스를
 
 모델은 읽기 패턴뿐 아니라 쓰기 빈도와 문서 성장도 만족해야 합니다.
 
-## 1-3. 접근 패턴 표 — 15분
-
+## 1-3. 접근 패턴 표
 | 기능 | 필터 | 정렬 | 프로젝션 | 빈도 | 결과 수 |
 | --- | --- | --- | --- | --- | --- |
 | ISBN 상세 | isbn = exact | 없음 | 전체 상세 | 높음 | 0~1 |
@@ -137,8 +287,7 @@ MongoDB 서버가 실행 중이고 `.env`가 강의 전용 데이터베이스를
 
 index 후보는 이 표의 필터와 정렬에서 나오고, embedding/reference 판단은 프로젝션·빈도·결과 수·쓰기에서 나옵니다.
 
-## 1-4. 객체 모델과 데이터베이스 모델 — 10분
-
+## 1-4. 객체 모델과 데이터베이스 모델
 JavaScript 화면 객체가 다음처럼 생겼다고 DB 문서도 반드시 같아야 하는 것은 아닙니다.
 
 ```js
@@ -151,8 +300,7 @@ const bookPageView = {
 
 화면 응답은 여러 source를 조합할 수 있습니다. 반대로 데이터베이스 문서는 원자성, 크기, 갱신, index를 고려합니다. API 응답 모양과 저장 모양을 구분합니다.
 
-## 1-5. 요구 변화 실험 — 10분
-
+## 1-5. 요구 변화 실험
 처음에는 author를 포함한 모델이 좋았다고 가정합니다. 다음 요구가 추가될 때 판단이 어떻게 달라지는지 적습니다.
 
 - 저자 프로필 페이지가 생김
@@ -163,8 +311,7 @@ const bookPageView = {
 
 같은 필드도 요구가 달라지면 모델이 달라집니다.
 
-### 1교시 체크포인트
-
+### 1단원 확인
 - [ ] 읽기와 쓰기 패턴을 각각 네 개 이상 적었습니다.
 - [ ] 필터·정렬·프로젝션으로 요구를 표현했습니다.
 - [ ] API 응답 모델과 저장 모델을 구분했습니다.
@@ -172,10 +319,8 @@ const bookPageView = {
 
 ---
 
-# 2교시. embedding과 reference — 60분
-
-## 2-1. embedding 판단 질문 — 10분
-
+# 2. embedding과 reference
+## 2-1. embedding 판단 질문
 다음 신호가 많으면 포함을 먼저 검토합니다.
 
 - 부모와 항상 함께 읽습니다.
@@ -187,8 +332,7 @@ const bookPageView = {
 
 포함은 JOIN 없는 읽기와 한 문서 원자성을 주지만, 중복 갱신과 문서 성장 비용이 있습니다.
 
-## 2-2. reference 판단 질문 — 10분
-
+## 2-2. reference 판단 질문
 다음 신호가 많으면 별도 컬렉션을 먼저 검토합니다.
 
 - 여러 부모가 같은 대상을 공유합니다.
@@ -200,8 +344,7 @@ const bookPageView = {
 
 참조는 source of truth를 한 곳에 두지만 추가 조회와 참조 무결성 관리가 필요합니다.
 
-## 2-3. 오늘 author 포함 — 10분
-
+## 2-3. author 포함 구조
 ```js
 author: {
   name: '김데이터',
@@ -209,7 +352,7 @@ author: {
 }
 ```
 
-교육용 요구에서는 도서 목록과 상세에서 항상 함께 읽고, author object가 작고, 변경 빈도가 낮다고 가정합니다.
+현재 예제에서는 도서 목록과 상세에서 항상 함께 읽고, author object가 작고, 변경 빈도가 낮다고 가정합니다.
 
 비용:
 
@@ -217,8 +360,7 @@ author: {
 - 서로 다른 표기가 섞일 수 있습니다.
 - 독립 author 페이지에는 별도 구조가 필요할 수 있습니다.
 
-## 2-4. 오늘 publisher 참조 — 10분
-
+## 2-4. publisher 참조 구조
 books:
 
 ```js
@@ -243,24 +385,21 @@ publisher 정보는 독립적으로 관리되고 여러 책이 공유하며 webs
 - 존재하지 않는 code도 book 문서에 저장될 수 있습니다.
 - publisher 삭제 시 book 참조 정리 정책이 필요합니다.
 
-## 2-5. 필드별 결정표 — 15분
-
-| 필드 | 오늘 선택 | 근거 | 재검토 신호 |
+## 2-5. 필드별 결정표
+| 필드 | 현재 단계 선택 | 근거 | 재검토 신호 |
 | --- | --- | --- | --- |
 | author summary | 포함 | 작고 항상 함께 읽음 | 독립 관리·잦은 변경 |
 | categories | 포함 배열 | 작은 bounded set | 수천 개 tag·별도 metadata |
 | inventory | 포함 객체 | 도서와 같은 생명주기 | 지점별 독립 재고·많은 warehouse |
 | publisher | code 참조 | 공유·독립 변경 | 단순 snapshot만 필요 |
-| reviews | 포함 배열 | 강의에서 매우 작음 | 대량 성장·페이지·신고/검색 |
+| reviews | 포함 배열 | 이 예제에서 매우 작음 | 대량 성장·페이지·신고/검색 |
 
 각 행의 재검토 신호까지 적어야 모델 선택이 완전합니다.
 
-## 2-6. snapshot vs live reference — 5분
-
+## 2-6. snapshot vs live reference
 주문 당시 상품 이름과 가격은 이후 상품 수정에 따라 바뀌면 안 될 수 있습니다. 이 경우 중복은 오류가 아니라 과거 사실을 보존하는 snapshot입니다. publisher website처럼 최신 값을 보여줘야 하는 필드는 live reference 후보입니다.
 
-### 2교시 체크포인트
-
+### 2단원 확인
 - [ ] 포함과 참조의 신호를 각각 세 개 이상 말했습니다.
 - [ ] author와 publisher 선택 근거를 비교했습니다.
 - [ ] 필드별 재검토 조건을 적었습니다.
@@ -268,10 +407,8 @@ publisher 정보는 독립적으로 관리되고 여러 책이 공유하며 webs
 
 ---
 
-# 3교시. 배열 성장과 일관성 — 60분
-
-## 3-1. bounded 배열 — 10분
-
+# 3. 배열 성장과 일관성
+## 3-1. bounded 배열
 ```js
 categories: ['database', 'mongodb']
 ```
@@ -286,8 +423,7 @@ categories: ['database', 'mongodb']
 - 중복을 허용하는가?
 - 원소별 독립 조회가 필요한가?
 
-## 3-2. unbounded 배열 — 10분
-
+## 3-2. unbounded 배열
 ```js
 reviews: [
   { reviewer: '민지', score: 5, comment: '좋아요' },
@@ -305,14 +441,12 @@ reviews: [
 
 대안은 `reviews` 컬렉션에 `bookId/isbn` reference를 두고 별도 index와 pagination을 사용하는 것입니다.
 
-## 3-3. hot 문서 — 10분
-
+## 3-3. hot 문서
 인기 도서 하나에 초당 수천 리뷰나 조회 카운트 update가 몰리면 하나의 문서가 쓰기 집중 지점이 됩니다. 한 문서 원자성은 장점이지만 모든 활동을 같은 문서에 모으는 것은 확장성 비용이 될 수 있습니다.
 
-카운터 분할, 이벤트 컬렉션, batch 집계 등은 심화 설계입니다. 오늘은 쓰기 빈도와 경합이 모델 판단 기준이라는 점을 기록합니다.
+카운터 분할, 이벤트 컬렉션, batch 집계 등을 검토할 때 쓰기 빈도와 경합을 모델 판단 기준으로 기록합니다.
 
-## 3-4. duplicate 데이터 일관성 — 10분
-
+## 3-4. duplicate 데이터 일관성
 author summary를 포함한 책 1,000권에서 이름을 바꾸는 흐름:
 
 ```text
@@ -325,8 +459,7 @@ author summary를 포함한 책 1,000권에서 이름을 바꾸는 흐름:
 
 MongoDB가 모든 중복 author 이름을 하나의 source로 자동 인식하지 않습니다. duplication strategy를 선택하면 갱신 전략도 함께 설계합니다.
 
-## 3-5. reference integrity — 10분
-
+## 3-5. reference integrity
 ```js
 {
   title: '잘못된 참조 책',
@@ -346,8 +479,7 @@ MongoDB는 SQL 외래 키처럼 이 값을 자동 거부하지 않습니다.
 
 조회 후 insert 사이 동시 변경 가능성까지 생각하면 transaction 또는 업무 흐름 설계가 필요할 수 있습니다.
 
-## 3-6. 실패 시나리오 활동 — 10분
-
+## 3-6. 실패 시나리오 활동
 각 상황에 탐지 방법과 복구 방법을 적습니다.
 
 | 실패 | 탐지 | 복구/예방 후보 |
@@ -358,8 +490,7 @@ MongoDB는 SQL 외래 키처럼 이 값을 자동 거부하지 않습니다.
 | reviews 과대 성장 | 문서 size/배열 건수 | 별도 컬렉션 migration |
 | stock 문자열 혼입 | type 필터/validation | 스키마 validation, 정리 |
 
-### 3교시 체크포인트
-
+### 3단원 확인
 - [ ] bounded/unbounded 배열 예를 들었습니다.
 - [ ] hot 문서가 생기는 이유를 설명했습니다.
 - [ ] duplication 선택에 갱신 전략이 필요함을 설명했습니다.
@@ -367,10 +498,8 @@ MongoDB는 SQL 외래 키처럼 이 값을 자동 거부하지 않습니다.
 
 ---
 
-# 4교시. 인덱스 원리와 실제 생성 — 60분
-
-## 4-1. 컬렉션 scan과 index scan 직관 — 10분
-
+# 4. 인덱스 원리와 실제 생성
+## 4-1. 컬렉션 scan과 index scan 직관
 ISBN 한 권을 찾을 때 index가 없다면 컬렉션의 문서를 처음부터 검사할 수 있습니다. 정렬된 ISBN index가 있으면 원하는 값의 위치를 빠르게 좁힐 수 있습니다.
 
 ```text
@@ -380,8 +509,7 @@ index lookup: 정렬된 key에서 978-...0002 위치 탐색 → document
 
 실제 실행 계획은 데이터 규모, 쿼리, index, optimizer 판단에 따라 달라집니다. index가 존재한다고 항상 사용되는 것은 아닙니다.
 
-## 4-2. `_id` index와 ISBN unique — 10분
-
+## 4-2. `_id` index와 ISBN unique
 모든 컬렉션에는 `_id` 고유 index가 있습니다. 업무에서는 ISBN으로 찾으므로 별도 index를 만듭니다.
 
 ```js
@@ -395,8 +523,7 @@ await books.createIndex({ isbn: 1 }, { unique: true })
 
 `findOne({ isbn })`는 읽기 API이고 unique index는 데이터 규칙입니다.
 
-## 4-3. 검색 index — 10분
-
+## 4-3. 검색 index
 ```js
 await books.createIndex({ categories: 1 })
 await books.createIndex({ 'inventory.stock': 1 })
@@ -407,16 +534,14 @@ await books.createIndex({ 'inventory.stock': 1 })
 
 `categories`는 배열이므로 multikey index가 됩니다. 배열의 각 원소를 검색 가능한 index entry로 다룹니다.
 
-## 4-4. publisher code unique — 5분
-
+## 4-4. publisher code unique
 ```js
 await publishers.createIndex({ code: 1 }, { unique: true })
 ```
 
 같은 code를 가진 publisher 두 개를 막고 exact lookup을 지원합니다. book의 publisherCode가 존재하는지는 자동 보장하지 않습니다. target 컬렉션의 고유성과 reference integrity는 서로 다른 문제입니다.
 
-## 4-5. index 목록 읽기 — 10분
-
+## 4-5. index 목록 읽기
 기준 코드:
 
 ```js
@@ -440,8 +565,7 @@ console.table(
 
 실제 출력 이름과 옵션을 확인합니다.
 
-## 4-6. unique 실패와 index 비용 — 15분
-
+## 4-6. unique 실패와 index 비용
 ### 중복 ISBN 실패
 
 sampleBooks insert 뒤 같은 ISBN을 넣습니다.
@@ -473,8 +597,7 @@ try {
 
 모든 필드에 index를 만드는 대신 실제 쿼리 표에서 시작합니다.
 
-### 4교시 체크포인트
-
+### 4단원 확인
 - [ ] unique index의 조회/제약 두 역할을 설명했습니다.
 - [ ] categories index가 multikey인 이유를 설명했습니다.
 - [ ] books index 목록을 실제로 확인했습니다.
@@ -482,10 +605,8 @@ try {
 
 ---
 
-# 5교시. 쿼리, 프로젝션, 정렬과 compound index — 60분
-
-## 5-1. 기준 쿼리 분석 — 10분
-
+# 5. 쿼리, 프로젝션, 정렬과 compound index
+## 5-1. 기준 쿼리 분석
 ```js
 const databaseBooks = await books
   .find(
@@ -513,8 +634,7 @@ const databaseBooks = await books
 
 현재 single index `categories_1`은 필터를 돕지만 정렬까지 최적으로 지원한다고 단정할 수 없습니다.
 
-## 5-2. compound index 후보 — 15분
-
+## 5-2. compound index 후보
 반복 쿼리가 category exact 필터 + publishedYear descending 정렬라면:
 
 ```js
@@ -538,8 +658,7 @@ await books.createIndex({ 'inventory.stock': -1, title: 1 })
 
 실제 선택은 데이터 분포와 `explain()`으로 검증합니다.
 
-## 5-3. index가 쿼리를 해결하지 않는 사례 — 10분
-
+## 5-3. index가 쿼리를 해결하지 않는 사례
 `categories_1`가 있어도 다음 쿼리를 모두 해결하지는 않습니다.
 
 - title 부분 문자열 검색
@@ -550,14 +669,12 @@ await books.createIndex({ 'inventory.stock': -1, title: 1 })
 
 쿼리마다 index를 추가하기 전에 빈도, 데이터 크기, 지연 요구, write 비용을 평가합니다.
 
-## 5-4. 프로젝션의 역할 — 10분
-
+## 5-4. 프로젝션의 역할
 프로젝션은 필요한 필드만 반환해 네트워크와 application object 크기를 줄입니다. 그러나 프로젝션 필드를 index에 모두 넣어 covered 쿼리를 만들겠다는 이유로 매우 큰 compound index를 무조건 추가하면 write/storage 비용이 커집니다.
 
-오늘 프로젝션에서 `_id: 0`은 목록 화면에 내부 ID를 숨기기 위한 출력 선택입니다. 보안상 민감 필드는 애초 권한과 API 설계를 함께 봐야 합니다.
+현재 단계 프로젝션에서 `_id: 0`은 목록 화면에 내부 ID를 숨기기 위한 출력 선택입니다. 보안상 민감 필드는 애초 권한과 API 설계를 함께 봐야 합니다.
 
-## 5-5. explain 관찰 — 10분
-
+## 5-5. explain 관찰
 실행 환경에서 다음을 추가해 plan을 관찰할 수 있습니다.
 
 ```js
@@ -578,8 +695,7 @@ console.log(JSON.stringify(plan, null, 2))
 
 작은 seed에서는 시간 차이가 의미 없으므로 plan 구조를 배우는 데 사용합니다.
 
-## 5-6. 쿼리-index 매핑 활동 — 5분
-
+## 5-6. 쿼리-index 매핑 활동
 | 쿼리 | 현재 index | 추가 후보 | 우선순위 근거 |
 | --- | --- | --- | --- |
 | ISBN 상세 | isbn_1 unique | 없음 | 높음·고유 |
@@ -588,8 +704,7 @@ console.log(JSON.stringify(plan, null, 2))
 | publisher books | 없음 | publisherCode_1 | 기능 빈도 확인 |
 | author name | 없음 | author.name_1 | 독립 검색 요구 확인 |
 
-### 5교시 체크포인트
-
+### 5단원 확인
 - [ ] 기준 쿼리의 필터/정렬/프로젝션을 분리했습니다.
 - [ ] compound index 필드 순서에 근거를 제시했습니다.
 - [ ] index가 없는 쿼리를 식별했습니다.
@@ -597,10 +712,8 @@ console.log(JSON.stringify(plan, null, 2))
 
 ---
 
-# 6교시. publisher 참조 조회와 모델 리뷰 — 60분
-
-## 6-1. 수동 reference 조회 — 10분
-
+# 6. publisher 참조 조회와 모델 리뷰
+## 6-1. 수동 reference 조회
 기준 코드:
 
 ```js
@@ -617,8 +730,7 @@ const publisher = await publishers.findOne(
 
 SQL JOIN처럼 한 쿼리 결과로 자동 결합된 것이 아닙니다.
 
-## 6-2. missing reference 처리 — 10분
-
+## 6-2. missing reference 처리
 ```js
 const publisher = await publishers.findOne({ code: book.publisherCode })
 
@@ -629,9 +741,8 @@ if (!publisher) {
 
 `databaseBooks[0]` 자체가 없을 수도 있으므로 배열 길이도 먼저 확인합니다. 빈 쿼리 결과와 missing publisher reference를 구분합니다.
 
-## 6-3. 여러 book의 publisher 조회 — 10분
-
-각 book마다 findOne을 실행하면 N+1 쿼리가 될 수 있습니다. 작은 수업 데이터에서는 보이기 어렵지만 다음 대안을 검토합니다.
+## 6-3. 여러 book의 publisher 조회
+각 book마다 findOne을 실행하면 N+1 쿼리가 될 수 있습니다. 작은 예제 데이터에서는 보이기 어렵지만 다음 대안을 검토합니다.
 
 1. 필요한 code를 중복 제거해 `$in`으로 publisher 한 번 조회
 2. Map으로 code→publisher 조합
@@ -646,8 +757,7 @@ const rows = await publishers.find({ code: { $in: codes } }).toArray()
 const byCode = new Map(rows.map((publisher) => [publisher.code, publisher]))
 ```
 
-## 6-4. `$lookup` 확장 예 — 10분
-
+## 6-4. `$lookup` 확장 예
 ```js
 const rows = await books
   .aggregate([
@@ -664,10 +774,9 @@ const rows = await books
   .toArray()
 ```
 
-`publisher`는 배열로 들어옵니다. `$lookup`을 쓸 수 있다는 사실이 모든 데이터를 참조로 나누라는 뜻은 아닙니다. 8일차 파이프라인 사고와 연결합니다.
+`publisher`는 배열로 들어옵니다. `$lookup`을 쓸 수 있다는 사실이 모든 데이터를 참조로 나누라는 뜻은 아닙니다. Step 8 파이프라인 사고와 연결합니다.
 
-## 6-5. 모델 리뷰 워크숍 — 15분
-
+## 6-5. 모델 리뷰 연습
 다음 중 하나를 선택합니다.
 
 ### 쇼핑몰 상품/주문
@@ -694,7 +803,7 @@ const rows = await books
 - 예약자 정보
 - 상태 변경 이력
 
-제출 항목:
+기록 항목:
 
 1. 읽기 패턴 3개
 2. 쓰기 패턴 3개
@@ -705,11 +814,10 @@ const rows = await books
 7. index 2개와 쿼리 근거
 8. 무결성 실패와 대응
 
-## 6-6. 출구 티켓 — 5분
-
+## 6-6. 마무리 확인
 1. publisherCode unique index가 book의 고아 참조까지 막지 못하는 이유는?
 2. categories index가 쓰기 비용을 늘리는 이유는?
-3. 오늘 모델을 다시 설계하게 만들 가장 큰 요구 변화는?
+3. 현재 단계 모델을 다시 설계하게 만들 가장 큰 요구 변화는?
 
 ---
 
@@ -756,9 +864,9 @@ if (databaseBooks.length === 0) {
 }
 ```
 
-## 7-4. step 전용 컬렉션
+## 7-4. 컬렉션 분리
 
-step-4의 `books_step4`와 step-5의 `books_step5`는 서로 다른 컬렉션입니다. 이전 단계 데이터를 migration하는 수업이 아니라 같은 예시를 다른 모델링 목적에 맞춰 재현합니다.
+step-4의 `books_step4`와 step-5의 `books_step5`는 서로 다른 컬렉션입니다. 이전 단계 데이터를 migration하는 작업이 아니라 같은 예시를 다른 모델링 목적에 맞춰 재현합니다.
 
 ---
 
@@ -940,7 +1048,7 @@ await books
 
 ## duplicate 키 오류가 납니다
 
-오류의 index 이름과 키 value를 읽습니다. seed가 두 번 insert됐는지, ISBN 입력이 정말 새로운지 확인합니다. 오늘 코드는 먼저 컬렉션을 비우므로 예시 자체 중복도 점검합니다.
+오류의 index 이름과 키 value를 읽습니다. seed가 두 번 insert됐는지, ISBN 입력이 정말 새로운지 확인합니다. 현재 단계 코드는 먼저 컬렉션을 비우므로 예시 자체 중복도 점검합니다.
 
 ## index가 있는데 쿼리가 느립니다
 
@@ -985,23 +1093,23 @@ await books
 
 ---
 
-# 12. 형성평가 — 20점
+# 12. 이해 점검
 
 ## 문항
 
-1. 접근 패턴에서 모델을 시작해야 하는 이유를 쓰세요. (2점)
-2. author embedding의 장점과 변경 비용을 하나씩 쓰세요. (2점)
-3. publisher reference의 장점과 조회 비용을 하나씩 쓰세요. (2점)
-4. bounded와 unbounded 배열을 categories/reviews로 설명하세요. (2점)
-5. source of truth와 snapshot의 차이를 주문 예로 설명하세요. (2점)
-6. publisherCode reference가 자동 보장하지 않는 두 가지는? (2점)
-7. ISBN unique index의 두 역할은? (2점)
-8. categories index가 multikey가 되는 이유는? (2점)
-9. index의 쓰기·저장 비용을 설명하세요. (2점)
-10. category 필터 + year 정렬 쿼리의 compound index 후보와 근거는? (2점)
+1. 접근 패턴에서 모델을 시작해야 하는 이유를 쓰세요.
+2. author embedding의 장점과 변경 비용을 하나씩 쓰세요.
+3. publisher reference의 장점과 조회 비용을 하나씩 쓰세요.
+4. bounded와 unbounded 배열을 categories/reviews로 설명하세요.
+5. source of truth와 snapshot의 차이를 주문 예로 설명하세요.
+6. publisherCode reference가 자동 보장하지 않는 두 가지는?
+7. ISBN unique index의 두 역할은?
+8. categories index가 multikey가 되는 이유는?
+9. index의 쓰기·저장 비용을 설명하세요.
+10. category 필터 + year 정렬 쿼리의 compound index 후보와 근거는?
 
 <details>
-<summary>평가 기준</summary>
+<summary>확인 기준</summary>
 
 1. 실제 필터/정렬/프로젝션/update를 만족하는 저장 구조가 필요함을 설명합니다.
 2. 한 번 읽기와 여러 book 중복 갱신을 함께 봅니다.
@@ -1016,28 +1124,21 @@ await books
 
 </details>
 
-## 점수 해석
-
-- 17~20점: CRUD 구현 단계 진행
-- 13~16점: 포함/참조 결정표와 index 매핑 보충
-- 9~12점: 한 도메인을 접근 패턴부터 다시 설계
-- 0~8점: 4일차 문서 구조와 오늘 1~3교시 재학습
+답을 위 확인 기준과 비교하고 근거가 부족한 항목은 관련 절의 실행 결과를 다시 확인합니다.
 
 ---
 
 # 저장소에 기록하기
 
-실험용 데이터를 정리하고 `npm.cmd run check`를 통과시킨 뒤 오늘의 코드와 기록을 저장합니다.
+실험용 데이터를 정리하고 `npm.cmd run check`를 통과시킨 뒤 현재 단계의 코드와 기록을 저장합니다.
 
 ```powershell
 git branch --show-current
 git status --short
 npm.cmd run check
-git diff
 git add .
-git diff --staged
 git commit -m "Complete database step 5"
-git push origin main
+git push
 git status --short --branch
 ```
 
@@ -1059,9 +1160,9 @@ git status --short --branch
 - [ ] publisherCode로 별도 문서를 조회했습니다.
 - [ ] 빈 book 결과와 missing publisher를 처리했습니다.
 - [ ] 다른 도메인 모델 review를 완료했습니다.
-- [ ] 형성평가에서 13점 이상을 받았습니다.
+- [ ] 이해 점검의 답을 실행 결과와 비교했습니다.
 
-## 회복 경로
+## 다시 확인할 항목
 
 1. author/publisher 포함·참조 결정표
 2. categories/reviews 성장 비교
@@ -1069,7 +1170,7 @@ git status --short --branch
 4. categories·stock index 목록 확인
 5. `database` category 조회와 publisher 추가 조회
 
-## 확장 경로
+## 추가 연습
 
 1. category+publishedYear compound index와 explain 비교
 2. 여러 publisher `$in` batch 조회
@@ -1077,8 +1178,8 @@ git status --short --branch
 4. orphan reference 탐지 파이프라인
 5. 리뷰 분리 모델과 summary 일관성 복구 설계
 
-## 다음 단계
+## 적용 질문
 
-오늘 모델과 index 근거를 세웠습니다. 6일차부터 `books_course`라는 지속 컬렉션에서 CLI 명령을 반복하며 Create와 Read를 수행합니다. 저장 전에 터미널 문자열을 숫자·배열·중첩 문서로 검증해 바꾸고, 생성 ID와 사후 조회를 확인합니다.
+`books_course`에 CLI 입력을 저장하려면 터미널 문자열을 숫자·배열·중첩 문서로 변환하고 검증해야 합니다.
 
 > 터미널의 stock 값은 항상 문자열이다. 빈 문자열, `-1`, `1.5`, `abc`를 데이터베이스에 보내기 전에 어떤 계층에서 어떤 메시지로 막아야 할까?
