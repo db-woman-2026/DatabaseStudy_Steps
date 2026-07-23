@@ -55,7 +55,6 @@
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
 ```powershell
-git switch step-5
 git branch --show-current
 git status
 npm.cmd ci
@@ -1025,6 +1024,24 @@ await books
 - 0~8점: 4일차 문서 구조와 오늘 1~3교시 재학습
 
 ---
+
+# 저장소에 기록하기
+
+실험용 데이터를 정리하고 `npm.cmd run check`를 통과시킨 뒤 오늘의 코드와 기록을 저장합니다.
+
+```powershell
+git branch --show-current
+git status --short
+npm.cmd run check
+git diff
+git add .
+git diff --staged
+git commit -m "Complete database step 5"
+git push origin main
+git status --short --branch
+```
+
+`main`과 `origin/main`이 같은 commit을 가리키고 작업 파일 목록이 비어 있으면 마쳤습니다.
 
 # 13. 완료 기준
 
