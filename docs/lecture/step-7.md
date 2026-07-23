@@ -709,7 +709,7 @@ npm.cmd start -- list
 
 다음 중 하나의 interface와 안전 흐름을 설계합니다.
 
-```powershell
+```text
 npm.cmd start -- increment-stock <isbn> <amount>
 npm.cmd start -- remove-category <isbn> <category>
 npm.cmd start -- soft-remove <isbn> confirm
