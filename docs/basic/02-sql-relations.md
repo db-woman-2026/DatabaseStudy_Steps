@@ -420,7 +420,7 @@ COMMIT된 결과는 장애가 생겨도 보존되어야 합니다.
 3. 도서가 없는 저자까지 보고 싶다면 INNER JOIN과 LEFT JOIN 중 무엇을 선택하나요?
 4. LEFT JOIN 집계에서 `COUNT(*)`와 `COUNT(books.id)`가 다를 수 있는 이유는 무엇인가요?
 5. UPDATE 전후에 확인할 세 가지 정보를 적으세요.
-6. prepared statement가 단순히 실행 속도만을 위한 기능이 아닌 이유는 무엇인가요?
+6. prepared statement가 실행 속도 외에 값 바인딩에도 필요한 이유는 무엇인가요?
 7. 트랜잭션이 모든 업무 오류를 자동으로 막아주지 않는 이유는 무엇인가요?
 
 <details>
