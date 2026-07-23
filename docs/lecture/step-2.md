@@ -51,7 +51,6 @@
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
 ```powershell
-git switch step-2
 git branch --show-current
 git status
 npm.cmd run check
@@ -671,7 +670,7 @@ ORDER BY authors.id, books.id;
 - 무도서: 0권 → NULL 확장 1행
 - 합계: 4행
 
-LEFT JOIN 결과 수는 단순히 왼쪽 테이블 행 수와 항상 같지 않습니다. 오른쪽에 여러 연결 행이 있으면 왼쪽 행이 반복됩니다.
+LEFT JOIN 결과 수는 왼쪽 테이블 행 수와 항상 같지 않습니다. 오른쪽에 여러 연결 행이 있으면 왼쪽 행이 반복됩니다.
 
 ## 6-3. ON과 WHERE — 10분
 
@@ -835,7 +834,7 @@ JOIN books ON books.id = loans.book_id;
 
 ## 예제 C. 저자 없는 도서가 가능한가
 
-현재 `author_id NOT NULL`과 외래 키 때문에 불가능합니다. 공동 저자나 저자 미상 요구가 생기면 단순히 NULL을 허용하기 전에 모델을 다시 검토합니다.
+현재 `author_id NOT NULL`과 외래 키 때문에 불가능합니다. 공동 저자나 저자 미상 요구가 생기면 NULL을 허용하기 전에 모델을 다시 검토합니다.
 
 공동 저자 모델:
 
@@ -963,7 +962,7 @@ SELECT * FROM books WHERE id = ?;
 
 ## step-1 데이터가 보이지 않습니다
 
-오늘은 `library-step-2.sqlite`라는 별도 파일을 사용하고 매번 새 스키마를 만듭니다. 브랜치는 코드 학습 이력을 누적하지만 실행 데이터베이스 파일은 단계별로 분리합니다.
+오늘은 `library-step-2.sqlite`라는 별도 파일을 사용하고 매번 새 스키마를 만듭니다. 코드는 개인 저장소의 `main`에 누적하지만 실행 데이터베이스 파일은 단계별로 분리합니다.
 
 ---
 
@@ -1007,9 +1006,27 @@ SELECT * FROM books WHERE id = ?;
 
 ---
 
+# 저장소에 기록하기
+
+실험용 데이터를 정리하고 `npm.cmd run check`를 통과시킨 뒤 오늘의 코드와 기록을 저장합니다.
+
+```powershell
+git branch --show-current
+git status --short
+npm.cmd run check
+git diff
+git add .
+git diff --staged
+git commit -m "Complete database step 2"
+git push origin main
+git status --short --branch
+```
+
+`main`과 `origin/main`이 같은 commit을 가리키고 작업 파일 목록이 비어 있으면 마쳤습니다.
+
 # 12. 완료 기준
 
-- [ ] `step-2` 브랜치와 전용 SQLite 파일을 확인했습니다.
+- [ ] 개인 저장소의 `main`과 전용 SQLite 파일을 확인했습니다.
 - [ ] 큰 테이블의 삽입·수정·삭제 이상을 설명했습니다.
 - [ ] authors/books/members/loans 엔터티를 요구사항에서 찾았습니다.
 - [ ] 네 테이블의 PK, FK, UNIQUE, CHECK를 표시했습니다.
@@ -1045,4 +1062,4 @@ SELECT * FROM books WHERE id = ?;
 
 오늘은 구조와 관계를 만들고 기준 JOIN을 실행했습니다. 3일차에는 같은 네 테이블에서 필터·정렬·집계를 만들고, UPDATE와 DELETE를 안전하게 수행합니다. 특히 대출 처리에서 재고 감소와 대출 생성이 하나만 성공하면 왜 잘못된지 미리 적습니다.
 
-> 재고 1권인 책을 두 회원이 거의 동시에 빌리려 할 때, 단순히 `SELECT stock` 후 `UPDATE`하면 어떤 경쟁이 생길까?
+> 재고 1권인 책을 두 회원이 거의 동시에 빌리려 할 때, `SELECT stock` 후 `UPDATE`하면 어떤 경쟁이 생길까?
