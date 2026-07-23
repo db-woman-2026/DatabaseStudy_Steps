@@ -55,12 +55,11 @@
 > Windows 11에서는 [환경 준비](../windows-11.md)를 먼저 확인합니다. `git`, `node`, `npm` 명령은 PowerShell에서도 같습니다. `npm.ps1` 오류가 나면 `npm.cmd`를 사용합니다.
 
 ```powershell
-git switch step-1
 git branch --show-current
 git status
 ```
 
-예상 브랜치는 `step-1`입니다. 이전 개인 수정이 있다면 무작정 삭제하지 말고 별도로 보관한 뒤 수업 기준 상태를 준비합니다.
+현재 브랜치는 `main`이어야 합니다. 이전 개인 수정이 남아 있다면 내용을 먼저 확인하고 별도로 보관하거나 commit한 뒤 시작합니다.
 
 ### 3.2 실행 환경
 
@@ -122,7 +121,7 @@ data/library-step-1.sqlite
 오늘 구성은 다음과 같습니다.
 
 ```text
-학습자
+PowerShell
   ↓ npm.cmd start
 Node.js index.js
   ↓ SQL
@@ -1008,16 +1007,34 @@ Node.js 22.13 이상인지 확인합니다. IDE 터미널과 일반 터미널이
 
 - 17~20점: 2일차 관계 모델링으로 진행
 - 13~16점: 키·constraint·prepared statement 실습 한 번 반복
-- 9~12점: 스키마 표와 실패 실험을 강사와 다시 수행
+- 9~12점: 스키마 표와 실패 실험을 기초 실습을 다시 수행
 - 0~8점: `docs/basic/01-database-rdbms.md`를 읽고 기준 실행부터 재시작
 
 ---
+
+# 저장소에 기록하기
+
+실험용 데이터를 정리하고 `npm.cmd run check`를 통과시킨 뒤 오늘의 코드와 기록을 저장합니다.
+
+```powershell
+git branch --show-current
+git status --short
+npm.cmd run check
+git diff
+git add .
+git diff --staged
+git commit -m "Complete database step 1"
+git push origin main
+git status --short --branch
+```
+
+`main`과 `origin/main`이 같은 commit을 가리키고 작업 파일 목록이 비어 있으면 마쳤습니다.
 
 # 12. 완료 기준
 
 다음을 모두 수행하면 1일차 필수 경로를 완료한 것입니다.
 
-- [ ] `step-1` 브랜치에서 기준 코드를 실행했습니다.
+- [ ] 개인 실습 저장소의 `main`에서 기준 코드를 실행했습니다.
 - [ ] 데이터베이스, DBMS, RDBMS, SQLite를 구분해 설명했습니다.
 - [ ] 테이블, 행, 열, 스키마, 기본 키를 회원 데이터에 연결했습니다.
 - [ ] 현재 단계 SQLite 파일의 생성과 초기화를 확인했습니다.
