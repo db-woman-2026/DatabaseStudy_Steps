@@ -237,7 +237,7 @@ Test-Path -LiteralPath .env
 (Get-Command node).Source
 ```
 
-PowerShell에서 `npm.ps1` 실행 정책 오류가 나오면 정책을 바꾸지 말고 `npm.cmd`와 `npx.cmd`를 사용합니다. Windows 방화벽이 Node.js 연결을 물으면 공용 네트워크는 선택하지 않고 신뢰하는 개인 네트워크에서만 허용합니다.
+이 교재에서는 앞선 설치·검사·실행 코드처럼 npm 실행 파일을 `npm.cmd`로 직접 지정합니다. Windows 방화벽이 Node.js 연결을 물으면 공용 네트워크는 선택하지 않고 신뢰하는 개인 네트워크에서만 허용합니다.
 
 ## 공식 안내
 
