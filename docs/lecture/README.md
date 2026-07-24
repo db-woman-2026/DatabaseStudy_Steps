@@ -1,11 +1,11 @@
 # 데이터베이스 단계별 실습
 
-[Windows 11 환경 준비](../windows-11.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Windows 11 x64 실습 환경 준비」 · 절 「1. Windows Terminal 설치」)</span>를 확인한 뒤 개인 저장소의 `main`에서 작업합니다. 코드와 쿼리는 직접 입력하고 실행 전 예상과 실행 후 검증을 함께 기록합니다.
+[Windows 11 환경 준비](../windows-11.md) <span class="print-reference" data-print-reference="true">(Database · Windows 11 x64 실습 환경 준비 · 1. Windows Terminal 설치)</span>를 확인한 뒤 개인 저장소의 `main`에서 작업합니다. 코드와 쿼리는 직접 입력하고 실행 전 예상과 실행 후 검증을 함께 기록합니다.
 
 ## 관련 자료
 
-- [실습 구성](./course-plan.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「데이터베이스 실습 구성」 · 절 「시작 조건」)</span>: 주제별 결과, 공통 검증 절차, 안전 경계
-- [기초 읽기 자료](../basic/README.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「데이터베이스 기초」 · 절 「문서 목록」)</span>: RDBMS, SQL, JSON, MongoDB 개념
+- [실습 구성](./course-plan.md) <span class="print-reference" data-print-reference="true">(Database · 데이터베이스 실습 구성 · 시작 조건)</span>: 주제별 결과, 공통 검증 절차, 안전 경계
+- [기초 읽기 자료](../basic/README.md) <span class="print-reference" data-print-reference="true">(Database · 데이터베이스 기초 · 문서 목록)</span>: RDBMS, SQL, JSON, MongoDB 개념
 
 ## 실습 방식
 
@@ -20,11 +20,11 @@
 
 | 단계 | 문서 | 실습 |
 | --- | --- | --- |
-| Step 1 | [데이터베이스와 RDBMS](./step-1.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 1. 데이터베이스와 RDBMS 기초」 · 절 「0. 먼저 생각할 질문」)</span> | SQLite 데이터베이스와 첫 테이블 |
-| Step 2 | [관계형 모델링과 SQL](./step-2.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 2. 관계형 데이터 모델링과 SQL 기초」 · 절 「0. 먼저 생각할 질문」)</span> | 키, 제약조건, JOIN |
-| Step 3 | [SQL 조회·조작·트랜잭션](./step-3.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 3. SQL 조회·조작·트랜잭션」 · 절 「0. 먼저 생각할 질문」)</span> | 필터, 집계, 안전한 변경 |
-| Step 4 | [MongoDB 문서 기초](./step-4.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 4. MongoDB와 JSON/BSON 문서 기초」 · 절 「0. 먼저 생각할 질문」)</span> | 연결, JSON 문서, 기본 조회 |
-| Step 5 | [MongoDB 모델링](./step-5.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 5. MongoDB 데이터 모델링과 인덱스」 · 절 「0. 먼저 생각할 질문」)</span> | 포함, 참조, 배열, 인덱스 |
-| Step 6 | [MongoDB CRUD 기초](./step-6.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 6. MongoDB CRUD 기초: Create와 Read」 · 절 「0. 먼저 생각할 질문」)</span> | 생성, 목록, 한 건 조회 |
-| Step 7 | [MongoDB CRUD 응용](./step-7.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 7. MongoDB CRUD 응용: Search, Update, Delete」 · 절 「0. 먼저 생각할 질문」)</span> | 수정, 삭제, 조건 검색 |
-| Step 8 | [복합 문서와 집계](./step-8.md) <span class="print-reference" data-print-reference="true">(인쇄본 위치: Database · 장 「Step 8. 복합 JSON, Aggregation, CRUD 종합」 · 절 「0. 먼저 생각할 질문」)</span> | 전체 CRUD와 Aggregation |
+| Step 1 | [데이터베이스와 RDBMS](./step-1.md) <span class="print-reference" data-print-reference="true">(Database · Step 1. 데이터베이스와 RDBMS 기초 · 0. 먼저 생각할 질문)</span> | SQLite 데이터베이스와 첫 테이블 |
+| Step 2 | [관계형 모델링과 SQL](./step-2.md) <span class="print-reference" data-print-reference="true">(Database · Step 2. 관계형 데이터 모델링과 SQL 기초 · 0. 먼저 생각할 질문)</span> | 키, 제약조건, JOIN |
+| Step 3 | [SQL 조회·조작·트랜잭션](./step-3.md) <span class="print-reference" data-print-reference="true">(Database · Step 3. SQL 조회·조작·트랜잭션 · 0. 먼저 생각할 질문)</span> | 필터, 집계, 안전한 변경 |
+| Step 4 | [MongoDB 문서 기초](./step-4.md) <span class="print-reference" data-print-reference="true">(Database · Step 4. MongoDB와 JSON/BSON 문서 기초 · 0. 먼저 생각할 질문)</span> | 연결, JSON 문서, 기본 조회 |
+| Step 5 | [MongoDB 모델링](./step-5.md) <span class="print-reference" data-print-reference="true">(Database · Step 5. MongoDB 데이터 모델링과 인덱스 · 0. 먼저 생각할 질문)</span> | 포함, 참조, 배열, 인덱스 |
+| Step 6 | [MongoDB CRUD 기초](./step-6.md) <span class="print-reference" data-print-reference="true">(Database · Step 6. MongoDB CRUD 기초: Create와 Read · 0. 먼저 생각할 질문)</span> | 생성, 목록, 한 건 조회 |
+| Step 7 | [MongoDB CRUD 응용](./step-7.md) <span class="print-reference" data-print-reference="true">(Database · Step 7. MongoDB CRUD 응용: Search, Update, Delete · 0. 먼저 생각할 질문)</span> | 수정, 삭제, 조건 검색 |
+| Step 8 | [복합 문서와 집계](./step-8.md) <span class="print-reference" data-print-reference="true">(Database · Step 8. 복합 JSON, Aggregation, CRUD 종합 · 0. 먼저 생각할 질문)</span> | 전체 CRUD와 Aggregation |
